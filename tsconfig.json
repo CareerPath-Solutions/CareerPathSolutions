@@ -5,8 +5,15 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@react-native-picker/picker": [
+        "node_modules/@react-native-picker/picker"
       ]
-    }
+    },
+    "typeRoots": [
+      "node_modules/@types",
+      "types"
+    ]
   },
   "include": [
     "**/*.ts",
