@@ -1,4 +1,3 @@
-// src/components/MainPage.tsx
 import React, { useState } from "react";
 import {
   View,
@@ -17,47 +16,11 @@ export default function MainPage() {
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handlePreviousOffers = async () => {
-    if (!username.trim()) {
-      Alert.alert("Error", "Please enter a username");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const ratings = await userService.getPreviousOffers(username);
-
-      if (ratings.length === 0) {
-        Alert.alert(
-          "No previous offers found",
-          "No ratings found for this username"
-        );
-        return;
-      }
-
-      router.push({
-        pathname: "/PreviousJobForm",
-        params: {
-          offers: JSON.stringify(ratings),
-        },
-      });
-    } catch (error) {
-      Alert.alert(
-        "Error",
-        (error as Error).message || "Failed to fetch previous offers"
-      );
-      console.error("Error fetching offers:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleNewJobOffer = async () => {
     if (!username.trim()) {
       Alert.alert("Error", "Please enter a username");
       return;
     }
-
     setIsLoading(true);
     try {
       await userService.createNewUser(username);
@@ -82,13 +45,11 @@ export default function MainPage() {
         source={require("../assets/LandingPageGraphic.jpeg")}
         style={styles.networkImage}
       />
-
       <Text style={styles.title}>CareerPath Solutions</Text>
       <Text style={styles.subtitle}>
         Take control of your career decisions. Compare complete job packages and
         benefits that matter to you.
       </Text>
-
       <TextInput
         style={styles.input}
         placeholder="Enter username"
@@ -105,16 +66,6 @@ export default function MainPage() {
         >
           <Text style={styles.buttonText1}>
             {isLoading ? "SAVING..." : "New Job Offer"}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, isLoading && styles.buttonDisabled]}
-          onPress={handlePreviousOffers}
-          disabled={isLoading}
-        >
-          <Text style={styles.buttonText}>
-            {isLoading ? "SAVING..." : "Previous Offers"}
           </Text>
         </TouchableOpacity>
       </View>

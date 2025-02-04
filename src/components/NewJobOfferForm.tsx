@@ -12,7 +12,7 @@ import {
   Alert,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { Picker } from "@react-native-picker/picker";
+import { Picker, PickerItem } from "@react-native-picker/picker";
 import styles from "./styles/NewJobOfferFormStyles";
 import { jobOfferService } from "../../business/services/jobOfferService";
 import {
@@ -101,13 +101,13 @@ export default function NewJobOfferForm() {
 
             <View style={styles.inputContainer}>
               <Picker
-                style={styles.input}
+                //style={styles.input}
                 selectedValue={position}
                 onValueChange={(itemValue) => setPosition(itemValue)}
               >
-                <Picker.Item label="Select a position..." value="" />
+                <PickerItem label="Select a position..." value="" />
                 {AVAILABLE_POSITIONS.map((pos) => (
-                  <Picker.Item key={pos} label={pos} value={pos} />
+                  <PickerItem key={pos} label={pos} value={pos} />
                 ))}
               </Picker>
               <Text style={styles.label}>Position Applied For</Text>

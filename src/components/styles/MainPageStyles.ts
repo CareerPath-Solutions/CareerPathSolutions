@@ -2,19 +2,19 @@
 import { StyleSheet, ViewStyle, TextStyle, ImageStyle } from 'react-native';
 
 interface Styles {
- container: ViewStyle;
- title: TextStyle;
- subtitle: TextStyle; 
- networkImage: ImageStyle;
- compareText: TextStyle;
- twoBtns: ViewStyle;
- button1: ViewStyle;
- button: ViewStyle;
- buttonText1: TextStyle;
- buttonText: TextStyle;
- input: ViewStyle;
- buttonDisabled: ViewStyle;
-}
+  container: ViewStyle;
+  title: TextStyle;
+  subtitle: TextStyle;
+  networkImage: ImageStyle;
+  compareText: TextStyle;
+  twoBtns: ViewStyle;
+  button1: ViewStyle;
+  button: ViewStyle;
+  buttonText1: TextStyle;
+  buttonText: TextStyle;
+  input: TextStyle;  // Changed from ViewStyle to TextStyle
+  buttonDisabled: ViewStyle;
+ }
 
 const styles = StyleSheet.create<Styles>({
  container: {
@@ -52,12 +52,10 @@ const styles = StyleSheet.create<Styles>({
    marginVertical: 20,
    fontWeight: '500',
  },
- twoBtns:{
-   flexDirection: 'row',
-   justifyContent: 'space-between',
-   width: '100%',
-   paddingHorizontal: 20,
- },
+ twoBtns: {
+  width: '100%',
+  paddingHorizontal: 20,
+},
  button1: {
    flex: 1,
    backgroundColor: 'white',

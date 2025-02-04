@@ -1,6 +1,6 @@
 // business/services/benefitsService.ts
 import { BenefitSelections } from '../../core/types/benefits.types';
-import { jobOfferRepository } from '../../../data/repositories/jobOfferRepository';
+import { jobOfferRepository } from '../../data/repositories/jobOfferRepository';
 import {
     calculateBenefitsGrade,
     calculateTimeOffGrade,

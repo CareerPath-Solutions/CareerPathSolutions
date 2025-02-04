@@ -1,4 +1,5 @@
 import { supabase } from '../database/supabase';
+import { JobOfferDetails } from '../../core/types/jobOffer.types';
 
 export const jobOfferRepository = {
   createUser: async (username: string) => {
@@ -49,5 +50,15 @@ export const jobOfferRepository = {
       .insert([ratingData]);
 
     if (error) throw error;
-  }
+  },
+
+  createJobOffer: async (formData: JobOfferDetails) => {
+    const { data, error } = await supabase
+      .from("job_offer")
+      .insert([formData])
+      .select();
+
+    if (error) throw error;
+    return data;
+  },
 };

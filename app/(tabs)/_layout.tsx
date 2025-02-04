@@ -1,50 +1,76 @@
-import { Tabs } from "expo-router";
+// app/_layout.tsx
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Platform } from "react-native";
 
-import { HapticTab } from "@/src/components/HapticTab";
-import { IconSymbol } from "@/src/components/ui/IconSymbol";
-import TabBarBackground from "@/src/components/ui/TabBarBackground";
-import { Colors } from "@/core/constants/Colors";
-import { useColorScheme } from "@/core/hooks/useColorScheme";
+// Define our route param types
+type AppParamList = {
+  index: undefined;
+  PreviousJobForm: { offers: string };
+  JobRating: { data: string };
+  NewJobOfferForm: { username: string };
+  BenefitForm: { 
+    company_name: string;
+    username: string;
+    salary: number;
+    position: string;
+  };
+};
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+// Make types available for other components
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends AppParamList {}
+  }
+}
 
+/**
+ * Root layout component for the application.
+ * This component sets up a stack navigator and global layout configurations.
+ * 
+ * @returns The root layout component with configured stack navigation
+ */
+export default function Layout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: "absolute",
-          },
-          default: {},
-        }),
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
-          ),
+    <>
+      <StatusBar style="auto" />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: '#F0F4FF' }
         }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: "Explore",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+      >
+        <Stack.Screen 
+          name="index" 
+          options={{
+            title: 'Home'
+          }}
+        />
+        <Stack.Screen 
+          name="PreviousJobForm" 
+          options={{
+            title: 'Previous Offers'
+          }}
+        />
+        <Stack.Screen 
+          name="JobRating" 
+          options={{
+            title: 'Job Rating'
+          }}
+        />
+        <Stack.Screen 
+          name="NewJobOfferForm" 
+          options={{
+            title: 'New Job Offer'
+          }}
+        />
+        <Stack.Screen 
+          name="BenefitForm" 
+          options={{
+            title: 'Benefits'
+          }}
+        />
+      </Stack>
+    </>
   );
 }
