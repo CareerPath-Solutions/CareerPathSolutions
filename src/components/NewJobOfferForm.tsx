@@ -46,7 +46,7 @@ export default function NewJobOfferForm() {
       await jobOfferService.createNewJobOffer(formData);
 
       router.push({
-        pathname: "/(tabs)",
+        pathname: "/",
         params: {
           salary,
           position,

@@ -1,43 +1,74 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
-import { useFonts } from "expo-font";
+// app/_layout.tsx
 import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import "react-native-reanimated";
+import React from "react";
 
-import { useColorScheme } from "@/core/hooks/useColorScheme";
+// Define route param types
+type AppParamList = {
+  index: undefined;
+  PreviousJobForm: { offers: string };
+  JobRating: { data: string };
+  NewJobOfferForm: { username: string };
+  BenefitForm: {
+    company_name: string;
+    username: string;
+    salary: number;
+    position: string;
+  };
+};
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
+// Make types available globally
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends AppParamList {}
   }
+}
 
+/**
+ * Root layout component for the application.
+ * Sets up stack navigation and global layout configurations.
+ */
+export default function Layout() {
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+    <>
       <StatusBar style="auto" />
-    </ThemeProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: "#F0F4FF" },
+        }}
+      >
+        <Stack.Screen
+          name="index"
+          options={{
+            title: "Home",
+          }}
+        />
+        <Stack.Screen
+          name="PreviousJobForm"
+          options={{
+            title: "Previous Offers",
+          }}
+        />
+        <Stack.Screen
+          name="JobRating"
+          options={{
+            title: "Job Rating",
+          }}
+        />
+        <Stack.Screen
+          name="NewJobOfferForm"
+          options={{
+            title: "New Job Offer",
+          }}
+        />
+        <Stack.Screen
+          name="BenefitForm"
+          options={{
+            title: "Benefits",
+          }}
+        />
+      </Stack>
+    </>
   );
 }

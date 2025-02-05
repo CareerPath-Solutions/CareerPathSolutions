@@ -21,7 +21,7 @@ const styles = StyleSheet.create<Styles>({
    flex: 1,
    backgroundColor: "#F0F4FF",
    alignItems: 'center',
-   justifyContent: 'space-between',
+  //  justifyContent: 'space-between',
    marginTop: 16,
    marginBottom: 20,
  },
@@ -55,6 +55,8 @@ const styles = StyleSheet.create<Styles>({
  twoBtns: {
   width: '100%',
   paddingHorizontal: 20,
+  marginTop: 10, // Add this to give some space after the input
+  minHeight: 50,
 },
  button1: {
    flex: 1,
