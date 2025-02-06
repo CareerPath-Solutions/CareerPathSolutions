@@ -1,4 +1,3 @@
-// src/cemnnoopst / NewJobOfferForm.tsx;
 import React, { useState } from "react";
 import {
   View,
@@ -12,13 +11,14 @@ import {
   Alert,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { Picker, PickerItem } from "@react-native-picker/picker";
+//import { Picker } from "@react-native-picker/picker/typings/Picker";
 import styles from "../src/styles/NewJobOfferFormStyles";
 import { jobOfferService } from "../business/services/jobOfferService";
 import {
   AVAILABLE_POSITIONS,
   JobOfferDetails,
 } from "../core/types/jobOffer.types";
+import { PickerItem, Picker } from "@react-native-picker/picker";
 type SearchParams = {
   username?: string;
 };
