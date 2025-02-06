@@ -17,7 +17,11 @@ export default function MainPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handlePreviousOffers = async () => {
+    console.log("Previous offers button pressed");
+    console.log("Username:", username);
+
     if (!username.trim()) {
+      console.log("Username empty, showing alert");
       Alert.alert("Error", "Please enter a username");
       return;
     }
