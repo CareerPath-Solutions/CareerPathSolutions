@@ -18,9 +18,10 @@ declare module '@react-native-picker/picker' {
       color?: string;
     }
   
-    export const Picker: ComponentType<PickerProps>;
-    export const PickerItem: ComponentType<PickerItemProps>;
-
+    export const Picker: ComponentType<PickerProps> & {
+      Item: ComponentType<PickerItemProps>;
+    };
+    
     declare module '@react-native-picker/picker' {
   import { ComponentType } from 'react';
   import { ViewProps } from 'react-native';

@@ -45,7 +45,7 @@ export default function Layout() {
           }}
         />
         <Stack.Screen
-          name="PreviousJobForm"
+          name="PreviousJobOffers"
           options={{
             title: "Previous Offers",
           }}

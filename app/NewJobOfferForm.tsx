@@ -11,17 +11,17 @@ import {
   Alert,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-//import { Picker } from "@react-native-picker/picker/typings/Picker";
 import styles from "../src/styles/NewJobOfferFormStyles";
 import { jobOfferService } from "../business/services/jobOfferService";
 import {
   AVAILABLE_POSITIONS,
   JobOfferDetails,
 } from "../core/types/jobOffer.types";
-import { PickerItem, Picker } from "@react-native-picker/picker";
+import { Picker } from "@react-native-picker/picker";
 type SearchParams = {
   username?: string;
 };
+
 export default function NewJobOfferForm() {
   const router = useRouter();
   const params = useLocalSearchParams<SearchParams>();
@@ -94,10 +94,10 @@ export default function NewJobOfferForm() {
                 selectedValue={position}
                 onValueChange={(itemValue) => setPosition(itemValue)}
               >
-                <PickerItem label="Select a position..." value="" />
-                {AVAILABLE_POSITIONS.map((pos) => (
-                  <PickerItem key={pos} label={pos} value={pos} />
-                ))}
+                <Picker.Item label="Select a position..." value="" />
+                  {AVAILABLE_POSITIONS.map((pos) => (
+                <Picker.Item key={pos} label={pos} value={pos} />
+              ))}
               </Picker>
               <Text style={styles.label}>Position Applied For</Text>
             </View>
