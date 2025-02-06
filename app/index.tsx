@@ -16,6 +16,25 @@ export default function MainPage() {
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const handlePreviousOffers = async () => {
+    if (!username.trim()) {
+      Alert.alert("Error", "Please enter a username");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const offers = await userService.getPreviousOffers(username);
+      router.push({
+        pathname: "/PreviousJobOffers",
+        params: { offers: JSON.stringify(offers) }
+      });
+    } catch (error) {
+      Alert.alert("Error", "Failed to fetch previous offers");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleNewJobOffer = async () => {
     if (!username.trim()) {
       Alert.alert("Error", "Please enter a username");
@@ -25,7 +44,7 @@ export default function MainPage() {
     try {
       await userService.createNewUser(username);
       router.push({
-        pathname: "./NewJobOfferForm",
+        pathname: "/NewJobOfferForm",
         params: { username: username },
       });
     } catch (error) {
@@ -67,6 +86,13 @@ export default function MainPage() {
           <Text style={styles.buttonText1}>
             {isLoading ? "SAVING..." : "New Job Offer"}
           </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, isLoading && styles.buttonDisabled]}
+          onPress={handlePreviousOffers}
+          disabled={isLoading}
+          >
+        <Text style={styles.buttonText}>Previous Offers</Text>
         </TouchableOpacity>
       </View>
     </View>

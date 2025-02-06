@@ -9,7 +9,7 @@ interface PreviousJobOffersProps {
   offers: JobOfferDetails[];
 }
 
-export function PreviousJobOffers({ offers }: PreviousJobOffersProps) {
+export default function PreviousJobOffers({ offers }: PreviousJobOffersProps) {
   const router = useRouter();
 
   const handleHomePress = () => {
