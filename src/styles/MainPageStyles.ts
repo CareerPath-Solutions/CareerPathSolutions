@@ -59,12 +59,13 @@ const styles = StyleSheet.create<Styles>({
   minHeight: 50,
 },
  button1: {
-   flex: 1,
+   //flex: 1,
    backgroundColor: 'white',
    borderRadius: 8,
    borderColor: '#2196F3',
    borderWidth: 1,
    height: 50,
+   width: '100%',
    shadowColor: "#000",
    shadowOffset: {
      width: 0,

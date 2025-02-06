@@ -2,8 +2,8 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import styles from "./styles/JobRatingStyles";
-import { JobRatingData } from "../../core/types/rating.types";
+import styles from "../src/styles/JobRatingStyles";
+import { JobRatingData } from "../core/types/rating.types";
 
 /**
  * Component for displaying the job rating details.

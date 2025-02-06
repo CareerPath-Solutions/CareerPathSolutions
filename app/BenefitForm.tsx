@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import styles from "./styles/BenefitsFormStyles";
-import {
-  BenefitSelections,
-  CheckboxProps,
-} from "../../core/types/benefits.types";
-import { benefitsService } from "../../business/services/benefitsService";
+import styles from "../src/styles/BenefitsFormStyles";
+import { BenefitSelections, CheckboxProps } from "../core/types/benefits.types";
+import { benefitsService } from "../business/services/benefitsService";
 
 export default function BenefitForm() {
   const router = useRouter();

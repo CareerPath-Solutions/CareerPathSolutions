@@ -1,4 +1,4 @@
-// src/components/NewJobOfferForm.tsx
+// src/cemnnoopst / NewJobOfferForm.tsx;
 import React, { useState } from "react";
 import {
   View,
@@ -13,27 +13,23 @@ import {
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Picker, PickerItem } from "@react-native-picker/picker";
-import styles from "../styles/NewJobOfferFormStyles";
-import { jobOfferService } from "../../business/services/jobOfferService";
+import styles from "../src/styles/NewJobOfferFormStyles";
+import { jobOfferService } from "../business/services/jobOfferService";
 import {
   AVAILABLE_POSITIONS,
   JobOfferDetails,
-} from "../../core/types/jobOffer.types";
-
+} from "../core/types/jobOffer.types";
 type SearchParams = {
   username?: string;
 };
-
 export default function NewJobOfferForm() {
   const router = useRouter();
   const params = useLocalSearchParams<SearchParams>();
   const username = params.username;
-
   const [companyName, setCompanyName] = useState<string>("");
   const [position, setPosition] = useState<string>("");
   const [salary, setSalary] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-
   const handleSubmit = async () => {
     try {
       const formData: JobOfferDetails = {
@@ -42,9 +38,7 @@ export default function NewJobOfferForm() {
         salary,
         description,
       };
-
       await jobOfferService.createNewJobOffer(formData);
-
       router.push({
         pathname: "/",
         params: {
@@ -62,7 +56,6 @@ export default function NewJobOfferForm() {
       console.error("Error saving job offer:", error);
     }
   };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -73,7 +66,6 @@ export default function NewJobOfferForm() {
         <View style={styles.greetingContainer}>
           <Text style={styles.greeting}>Hi, {username}</Text>
         </View>
-
         <View style={styles.container}>
           <View style={styles.imageContainer}>
             <Image
@@ -83,9 +75,7 @@ export default function NewJobOfferForm() {
               accessibilityLabel="Job Offer Header Image"
             />
           </View>
-
           <Text style={styles.heading}>New Job Offer Details</Text>
-
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
               <TextInput
@@ -98,7 +88,6 @@ export default function NewJobOfferForm() {
               />
               <Text style={styles.label}>Company Name</Text>
             </View>
-
             <View style={styles.inputContainer}>
               <Picker
                 //style={styles.input}
@@ -112,7 +101,6 @@ export default function NewJobOfferForm() {
               </Picker>
               <Text style={styles.label}>Position Applied For</Text>
             </View>
-
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
@@ -125,7 +113,6 @@ export default function NewJobOfferForm() {
               />
               <Text style={styles.label}>Salary Offered</Text>
             </View>
-
             <View style={styles.inputContainer}>
               <TextInput
                 style={[styles.textArea, { marginBottom: 20 }]}
@@ -140,7 +127,6 @@ export default function NewJobOfferForm() {
               />
               <Text style={styles.label}>About</Text>
             </View>
-
             <TouchableOpacity
               style={[styles.submitButton, { marginBottom: 40 }]}
               onPress={handleSubmit}

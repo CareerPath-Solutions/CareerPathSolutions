@@ -8,7 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
-import styles from "../src/components/styles/MainPageStyles";
+import styles from "../src/styles/MainPageStyles";
 import { userService } from "../business/services/userService";
 
 export default function MainPage() {

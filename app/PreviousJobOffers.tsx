@@ -2,8 +2,8 @@
 import React from "react";
 import { ScrollView, Text, Image, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
-import styles from "./styles/PreviousJobOffersStyle";
-import { JobOfferDetails } from "../../core/types/jobOffer.types";
+import styles from "../src/styles/PreviousJobOffersStyle";
+import { JobOfferDetails } from "../core/types/jobOffer.types";
 
 interface PreviousJobOffersProps {
   offers: JobOfferDetails[];
