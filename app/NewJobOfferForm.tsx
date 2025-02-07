@@ -30,6 +30,7 @@ export default function NewJobOfferForm() {
   const [position, setPosition] = useState<string>("");
   const [salary, setSalary] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+
   const handleSubmit = async () => {
     try {
       const formData: JobOfferDetails = {
@@ -40,7 +41,7 @@ export default function NewJobOfferForm() {
       };
       await jobOfferService.createNewJobOffer(formData);
       router.push({
-        pathname: "/",
+        pathname: "/BenefitForm",
         params: {
           salary,
           position,
