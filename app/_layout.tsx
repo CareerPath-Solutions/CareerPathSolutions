@@ -10,6 +10,7 @@ SplashScreen.preventAutoHideAsync();
 // Define route param types
 type AppParamList = {
   index: undefined;
+  //TODO add one for MainMenu screen because it loads with the username string
   PreviousJobForm: { offers: string };
   JobRating: { data: string };
   NewJobOfferForm: { username: string };

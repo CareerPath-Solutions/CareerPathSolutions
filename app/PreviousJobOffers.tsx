@@ -2,6 +2,7 @@
 
 import { ScrollView, Text, Image, TouchableOpacity, View } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { useState, useEffect } from 'react';
 import styles from "../src/styles/PreviousJobOffersStyle";
 import { RatingDisplay } from "../core/types/user.types";
 import { userService } from "../business/services/userService";
@@ -9,11 +10,20 @@ import { userService } from "../business/services/userService";
 export default function PreviousJobOffers() {
   const params = useLocalSearchParams();
   const router = useRouter();
+  const [ratings, setRatings] = useState<RatingDisplay[]>([]);
   const username = params.username as string;
-
-  const ratings: RatingDisplay[] = params.offers 
-    ? JSON.parse(String(params.offers))
-    : [];
+ 
+  useEffect(() => {
+    async function fetchRatings() {
+      try {
+        const userRatings = await userService.getPreviousOffers(username);
+        setRatings(userRatings);
+      } catch (error) {
+        console.error('Error fetching ratings:', error);
+      }
+    }
+    fetchRatings();
+  }, [username]); 
 
   const handleHomePress = () => {
     router.push("/");
