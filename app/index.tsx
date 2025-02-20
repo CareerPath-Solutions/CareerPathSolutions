@@ -1,66 +1,114 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  TextInput,
-  Alert,
-} from "react-native";
-import { useRouter } from "expo-router";
-import styles from "../src/styles/MainPageStyles";
-import { userService } from "../business/services/userService";
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { useRouter } from 'expo-router';
+import { supabase } from '../data/database/supabase';
+import styles from '../src/styles/AuthStyles';
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
+import { makeRedirectUri } from 'expo-auth-session';
+import * as QueryParams from 'expo-auth-session/build/QueryParams';
 
-export default function MainPage() {
+WebBrowser.maybeCompleteAuthSession();
+
+export default function AuthScreen() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const redirectTo = makeRedirectUri();
+  const url = Linking.useURL();
 
-  const handlePreviousOffers = async () => {
-    console.log("Previous offers button pressed");
-    console.log("Username:", username);
+  const createSessionFromUrl = async (url: string) => {
+    const { params, errorCode } = QueryParams.getQueryParams(url);
+    if (errorCode) throw new Error(errorCode);
+    const { access_token, refresh_token } = params;
+    if (!access_token) return;
 
-    if (!username.trim()) {
-      console.log("Username empty, showing alert");
-      Alert.alert("Error", "Please enter a username");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const offers = await userService.getPreviousOffers(username);
-      router.push({
-        pathname: "/PreviousJobOffers",
-        params: { offers: JSON.stringify(offers) }
-      });
-    } catch (error) {
-      Alert.alert("Error", "Failed to fetch previous offers");
-    } finally {
-      setIsLoading(false);
-    }
+    const { data, error } = await supabase.auth.setSession({
+      access_token,
+      refresh_token,
+    });
+    if (error) throw error;
+    return data.session;
   };
 
-  const handleNewJobOffer = async () => {
-    if (!username.trim()) {
-      Alert.alert("Error", "Please enter a username");
-      return;
+  useEffect(() => {
+    checkUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          router.replace('/MainMenu');
+        }
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (url) {
+      createSessionFromUrl(url);
     }
-    setIsLoading(true);
+  }, [url]);
+
+  /**
+   * This checkUser signs out the user upon login to ensure
+   *  the login screen is never skipped even if the username is cached.
+   */
+  // async function checkUser() {
+  //   try {
+  //     // Sign out any existing session when the auth screen loads
+  //     await supabase.auth.signOut();
+  //   } catch (error) {
+  //     console.error('Error checking user:', error);
+  //   }
+  // }
+
+  /**
+   * This checkUser function will automatically sign in
+   *  the user and skip login page once signed in the first time.
+   */
+  async function checkUser() {
     try {
-      await userService.createNewUser(username);
-      router.push({
-        pathname: "/NewJobOfferForm",
-        params: { username: username },
-      });
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        router.replace('/MainMenu');
+      }
     } catch (error) {
-      Alert.alert(
-        "Error",
-        (error as Error).message || "Failed to save username"
+      console.error('Error checking user:', error);
+    }
+  }
+
+  async function signInWithGitHub() {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo,
+          skipBrowserRedirect: true,
+        }
+      });
+
+      if (error) throw error;
+
+      const res = await WebBrowser.openAuthSessionAsync(
+        data?.url ?? "",
+        redirectTo
       );
-      console.error("Error saving username:", error);
+
+      if (res.type === "success") {
+        const { url } = res;
+        await createSessionFromUrl(url);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error signing in with GitHub');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
+  }
 
   return (
     <View style={styles.container}>
@@ -70,35 +118,18 @@ export default function MainPage() {
       />
       <Text style={styles.title}>CareerPath Solutions</Text>
       <Text style={styles.subtitle}>
-        Take control of your career decisions. Compare complete job packages and
-        benefits that matter to you.
+        Take control of your career decisions with personalized job package analysis.
       </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter username"
-        value={username}
-        onChangeText={setUsername}
-        editable={!isLoading}
-        autoCapitalize="none"
-      />
-      <View style={styles.twoBtns}>
-        <TouchableOpacity
-          style={[styles.button1, isLoading && styles.buttonDisabled]}
-          onPress={handleNewJobOffer}
-          disabled={isLoading}
-        >
-          <Text style={styles.buttonText1}>
-            {isLoading ? "SAVING..." : "New Job Offer"}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, isLoading && styles.buttonDisabled]}
-          onPress={handlePreviousOffers}
-          disabled={isLoading}
-          >
-        <Text style={styles.buttonText}>Previous Offers</Text>
-        </TouchableOpacity>
-      </View>
+
+      <TouchableOpacity 
+        style={[styles.githubButton, loading && styles.buttonDisabled]}
+        onPress={signInWithGitHub}
+        disabled={loading}
+      >
+        <Text style={styles.buttonText}>
+          {loading ? "Signing in..." : "Sign in with GitHub"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }

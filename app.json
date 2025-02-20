@@ -5,17 +5,19 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "joboffertool",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.joboffertool.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.joboffertool.app"
     },
     "web": {
       "bundler": "metro",
@@ -27,8 +29,8 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "image": "./assets/images/job-rating-logo-puppy.png",
+          "imageWidth": 500,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
@@ -39,3 +41,4 @@
     }
   }
 }
+

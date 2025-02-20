@@ -1,11 +1,16 @@
 // app/_layout.tsx
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect } from "react";
+import * as SplashScreen from "expo-splash-screen";
+
+// Keep splash screen visible while we initialize
+SplashScreen.preventAutoHideAsync();
 
 // Define route param types
 type AppParamList = {
   index: undefined;
+  //TODO add one for MainMenu screen because it loads with the username string
   PreviousJobForm: { offers: string };
   JobRating: { data: string };
   NewJobOfferForm: { username: string };
@@ -29,6 +34,23 @@ declare global {
  * Sets up stack navigation and global layout configurations.
  */
 export default function Layout() {
+  useEffect(() => {
+    async function prepare() {
+      try {
+        // Add any initialization logic here
+        // For example, loading fonts, making API calls, etc.
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate loading time
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Hide splash screen
+        await SplashScreen.hideAsync();
+      }
+    }
+
+    prepare();
+  }, []);
+
   return (
     <>
       <StatusBar style="auto" />
@@ -40,6 +62,12 @@ export default function Layout() {
       >
         <Stack.Screen
           name="index"
+          options={{
+            title: "Authentication",
+          }}
+        />
+        <Stack.Screen
+          name="MainMenu"
           options={{
             title: "Home",
           }}
