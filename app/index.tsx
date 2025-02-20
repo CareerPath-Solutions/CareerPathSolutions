@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
-import { useRouter } from 'expo-router';
-import { supabase } from '../data/database/supabase';
-import styles from '../src/styles/AuthStyles';
-import * as WebBrowser from 'expo-web-browser';
-import * as Linking from 'expo-linking';
-import { makeRedirectUri } from 'expo-auth-session';
-import * as QueryParams from 'expo-auth-session/build/QueryParams';
+import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, Image } from "react-native";
+import { useRouter } from "expo-router";
+import { supabase } from "../data/database/supabase";
+import styles from "../src/styles/AuthStyles";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
+import { makeRedirectUri } from "expo-auth-session";
+import * as QueryParams from "expo-auth-session/build/QueryParams";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -35,8 +35,8 @@ export default function AuthScreen() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-          router.replace('/MainMenu');
+        if (event === "SIGNED_IN" && session) {
+          router.replace("MainMenu");
         }
       }
     );
@@ -71,12 +71,14 @@ export default function AuthScreen() {
    */
   async function checkUser() {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
-        router.replace('/MainMenu');
+        router.replace("MainMenu");
       }
     } catch (error) {
-      console.error('Error checking user:', error);
+      console.error("Error checking user:", error);
     }
   }
 
@@ -84,11 +86,11 @@ export default function AuthScreen() {
     try {
       setLoading(true);
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
+        provider: "github",
         options: {
           redirectTo,
           skipBrowserRedirect: true,
-        }
+        },
       });
 
       if (error) throw error;
@@ -103,8 +105,8 @@ export default function AuthScreen() {
         await createSessionFromUrl(url);
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error signing in with GitHub');
+      console.error("Error:", error);
+      alert("Error signing in with GitHub");
     } finally {
       setLoading(false);
     }
@@ -118,10 +120,11 @@ export default function AuthScreen() {
       />
       <Text style={styles.title}>CareerPath Solutions</Text>
       <Text style={styles.subtitle}>
-        Take control of your career decisions with personalized job package analysis.
+        Take control of your career decisions with personalized job package
+        analysis.
       </Text>
 
-      <TouchableOpacity 
+      <TouchableOpacity
         style={[styles.githubButton, loading && styles.buttonDisabled]}
         onPress={signInWithGitHub}
         disabled={loading}

@@ -14,6 +14,7 @@ type AppParamList = {
   PreviousJobForm: { offers: string };
   JobRating: { data: string };
   NewJobOfferForm: { username: string };
+  MainMenu: { username: string };
   BenefitForm: {
     company_name: string;
     username: string;
@@ -39,7 +40,7 @@ export default function Layout() {
       try {
         // Add any initialization logic here
         // For example, loading fonts, making API calls, etc.
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate loading time
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate loading time
       } catch (e) {
         console.warn(e);
       } finally {
