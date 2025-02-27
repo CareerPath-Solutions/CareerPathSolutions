@@ -2,6 +2,19 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## Environment Setup
+
+This project uses environment variables for configuration. To set up your local environment:
+
+1. Create a `.env` file in the project root
+2. Copy the contents of `.env.example` to your `.env` file
+3. Replace the example values with your actual Supabase credentials
+
+Example .env file structure:
+```env
+EXPO_PUBLIC_SUPABASE_URL=your_supabase_project_url
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
 ## Get started
 
 1. Install dependencies

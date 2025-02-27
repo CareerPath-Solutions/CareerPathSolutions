@@ -43,11 +43,11 @@ export default function NewJobOfferForm() {
       router.push({
         pathname: "/BenefitForm",
         params: {
-          salary,
+          salary: Number(salary),
           position,
-          username: username,
+          username: username || "",
           company_name: companyName,
-        },
+        } as any,
       });
     } catch (error) {
       Alert.alert(

@@ -3,9 +3,16 @@ import { JobOfferDetails } from '../../core/types/jobOffer.types';
 
 export const jobOfferRepository = {
   createUser: async (username: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("No authenticated user");
+    
     const { data, error } = await supabase
       .from('users')
-      .insert([{ user_name: username }])
+      .insert([{ 
+        user_name: username,
+        auth_id: user.id,
+        created_at: new Date()
+      }])
       .select()
       .single();
       

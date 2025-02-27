@@ -2,6 +2,7 @@
 import { StyleSheet, ViewStyle, TextStyle, ImageStyle } from 'react-native';
 
 interface Styles {
+  signOutButtonText: { color: string; fontSize: number; fontWeight: "bold"; };
   container: ViewStyle;
   title: TextStyle;
   subtitle: TextStyle;
@@ -121,6 +122,11 @@ button: {
  buttonDisabled: {
    opacity: 0.5
  },
+ signOutButtonText: {
+  color: 'white',
+  fontSize: 16,
+  fontWeight: 'bold',
+},
 });
 
 export default styles;
