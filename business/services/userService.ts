@@ -1,71 +1,150 @@
-// business/services/userService.ts
 import { userRepository } from '../../data/repositories/userRepository';
-import { RatingDisplay } from '../../core/types/user.types';
-import { supabase } from '../../data/database/supabase';
+import { RatingDisplay, User } from '../../core/types/user.types';
+import * as WebBrowser from "expo-web-browser";
 
 export const userService = {
-    async getOrCreateUser() {
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          
-          if (!user) throw new Error("No authenticated user");
+  /**
+   * Get the currently authenticated user
+   */
+  async getCurrentAuthenticatedUser() {
+    return await userRepository.getCurrentAuthenticatedUser();
+  },
 
-          console.log('Auth user:', user);
-          
-          // Update display name from auth
-          const displayName = user.user_metadata.user_name;
-          await supabase.auth.updateUser({
-             data: { display_name: displayName }
-          });
+  /**
+   * Check if a user is authenticated and get their DB user
+   */
+  async checkAuthentication(authenticatedUser: any): Promise<User | null> {
+    if (!authenticatedUser) return null;
+    const username = this._extractUsername(authenticatedUser);
+    return await userRepository.getOrCreateGitHubUserByAuthId(authenticatedUser.id, username);
+  },
 
-          // Extract username from GitHub metadata
-          const username = user.user_metadata.user_name || user.email?.split('@')[0];
-          
-          // Near start of getOrCreateUser to display debugging info:     DELETE DELETE DELETE
-          console.log('Auth user:', user);
-          console.log('Creating new user with:', {
-              username,
-              authId: user.id
-          });
+  /**
+   * Get or create a GitHub user in the database
+   */
+  async getOrCreateGitHubUser(authenticatedUser: any): Promise<User | null> {
+    if (!authenticatedUser) return null;
+    const username = this._extractUsername(authenticatedUser);
+    return await userRepository.getOrCreateGitHubUserByAuthId(authenticatedUser.id, username);
+  },
 
-          // Check if user exists in your users table
-          const { data: existingUser, error: findError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('auth_id', user.id)
-            .single();
-          
-          if (existingUser) return existingUser;
-          
-          // Create user if not exists
-          const { data: newUser, error: createError } = await supabase
-            .from('users')
-            .insert({
-              user_name: username,
-              auth_id: user.id
-            })
-            .select()
-            .single();
-          
-          if (createError) throw createError;
-          
-          return newUser;
-        } catch (error) {
-          console.error('Error in getOrCreateUser:', error);
-          throw error;
-        }
-      },
-  
-    async getPreviousOffers(userId: string): Promise<RatingDisplay[]> {
-        try {
-            const ratings = await userRepository.getRatingsByUserId(userId);
-            return ratings.map(rating => ({
-                company: rating.company_name,
-                grade: rating.overall_grade
-            }));
-        } catch (error) {
-            console.error('Error in getPreviousOffers:', error);
-            throw error;
-        }
+  /**
+   * Get previous offers/ratings for a user
+   */
+  async getPreviousOffers(username: string): Promise<RatingDisplay[]> {
+    try {
+      const ratings = await userRepository.getRatingsByUserId(username);
+      return ratings.map(rating => ({
+        company: rating.company_name,
+        grade: rating.overall_grade
+      }));
+    } catch (error) {
+      console.error('Error fetching previous offers:', error);
+      return [];
     }
+  },
+
+  /**
+   * Validate a username (check if available)
+   */
+  async validateUsername(username: string): Promise<boolean> {
+    if (!username.trim()) {
+      throw new Error("Username is required");
+    }
+    const users = await userRepository.findUsersByUserName(username);
+    if (users && users.length > 0) {
+      throw new Error("This username is already taken. Please choose another.");
+    }
+    return true;
+  },
+
+  /**
+   * Get a user by their username
+   */
+  async getUserByUsername(username: string): Promise<User | null> {
+    return await userRepository.getUserByUsername(username);
+  },
+
+  /**
+   * Sign in with GitHub OAuth
+   */
+  async signInWithGitHub(redirectUri: string) {
+    try {
+      // Use Supabase's built-in OAuth handling instead of manual URL construction
+      return await userRepository.signInWithGitHub('github');
+    } catch (error) {
+      console.error("Error initiating GitHub sign-in:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Create a session from a redirect URL containing an auth code
+   */
+  async createSessionFromUrl(url: string) {
+    try {
+      const parsedUrl = new URL(url);
+      const searchParams = new URLSearchParams(parsedUrl.search);
+      const code = searchParams.get('code');
+      
+      if (code) {
+        return await userRepository.exchangeCodeForSession(code);
+      }
+      return null;
+    } catch (error) {
+      console.error("Error creating session from URL:", error);
+      return null;
+    }
+  },
+
+  /**
+   * Set up a listener for authentication state changes
+   */
+  onAuthStateChange(callback: (event: string) => void) {
+    return userRepository.onAuthStateChange(callback);
+  },
+
+  /**
+   * Sign out the current user
+   */
+  async signOut() {
+    return await userRepository.signOut();
+  },
+
+  /**
+   * Update a user's profile
+   */
+  async updateUserProfile(userId: string, updates: Partial<User>): Promise<User> {
+    return await userRepository.updateUserProfile(userId, updates);
+  },
+
+  /**
+   * Delete a user account
+   */
+  async deleteUser(userId: string): Promise<boolean> {
+    return await userRepository.deleteUser(userId);
+  },
+
+  // Private helper methods
+  _extractUsername(authenticatedUser: any): string {
+    return authenticatedUser.user_metadata?.user_name ||
+           authenticatedUser.email?.split('@')[0] ||
+           `github_user_${authenticatedUser.id.slice(0, 8)}`;
+  },
+
+  _buildGitHubAuthUrl(redirectUri: string): string {
+    // These values would typically come from environment variables
+    const clientId = "0v23liXUkdfrifpf3qw7";// TODO Does this need to be concealed in .env file?????
+    const authEndpoint = "https://github.com/login/oauth/authorize";
+    
+    // Create URL parameters manually
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      scope: "read:user user:email",
+      state: Math.random().toString(36).substring(2, 15),
+    });
+    
+    return `${authEndpoint}?${params.toString()}`;
+  }
 };
