@@ -1,4 +1,3 @@
-// core/types/user.types.ts
 export interface User {
     id: string;
     user_name: string;
@@ -14,3 +13,13 @@ export interface RatingDisplay {
     company: string;
     grade: string;
 }
+
+export interface UserPreferences {
+    health: number;
+    vision: number;
+    vacation: number;
+    sick: number;
+    maternity: number;
+    paternity: number;
+    religiousLeave: number;
+  }
