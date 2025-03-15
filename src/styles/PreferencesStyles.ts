@@ -1,52 +1,35 @@
-import { StyleSheet, ViewStyle, TextStyle } from "react-native";
+import { StyleSheet } from 'react-native';
 
-interface Styles {
-  container: ViewStyle;
-  label: TextStyle;
-  sliderContainer: ViewStyle;
-  slider: ViewStyle;
-  tickContainer: ViewStyle;
-  tick: ViewStyle;
-  scaleContainer: ViewStyle;
-  scaleText: TextStyle;
-}
-
-export const styles = StyleSheet.create<Styles>({
-  container: {
-    marginBottom: 24,
+export const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#F0F4FF',
   },
-  label: {
-    fontSize: 18,
-    color: "#374151",
-    marginBottom: 8,
+  container: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginVertical: 20,
+    color: '#2196F3',
   },
   sliderContainer: {
-    height: 40,
-    justifyContent: "center",
+    width: '100%',
+    marginVertical: 10,
   },
-  slider: {
-    width: "100%",
+  sliderLabel: {
+    fontSize: 16,
+    marginBottom: 5,
   },
-  tickContainer: {
-    position: "absolute",
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 2,
+  sliderValueContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 5,
   },
-  tick: {
-    width: 2,
-    height: 8,
-    backgroundColor: "#D1D5DB",
-  },
-  scaleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 2,
-    marginTop: 4,
-  },
-  scaleText: {
+  sliderValue: {
     fontSize: 14,
-    color: "#6B7280",
-  },
+    color: '#666',
+  }
 });

@@ -1,4 +1,3 @@
-// src/components/styles/PreviousJobOffersStyles.ts
 import { StyleSheet, ViewStyle, TextStyle, ImageStyle } from 'react-native';
 
 interface Styles {

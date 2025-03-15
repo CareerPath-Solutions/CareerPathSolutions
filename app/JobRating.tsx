@@ -1,4 +1,3 @@
-// src/components/JobRating.tsx
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -6,16 +5,17 @@ import styles from "../src/styles/JobRatingStyles";
 import { JobRatingData } from "../core/types/rating.types";
 
 /**
- * Component for displaying the job rating details.
- * This includes grades for benefits, paid leave, salary, and an overall grade.
+ *
+ * @returns JobRating component
+ * This component displays the job rating information including benefits, paid leave, salary, and overall grade.
  */
 export default function JobRating(): JSX.Element {
   const params = useLocalSearchParams();
   const router = useRouter();
 
   /**
-   * Parsed job rating data from the navigation parameters.
-   * 'data' contains grades for benefits, paid leave, salary, and the overall grade.
+   * State variable to hold the job rating data
+   * The data is passed as a parameter and parsed from JSON format.
    */
   const data: JobRatingData | null = params.data
     ? JSON.parse(String(params.data))
@@ -24,7 +24,8 @@ export default function JobRating(): JSX.Element {
   console.log("JobRating received data:", data);
 
   /**
-   * Handles navigation to the home screen
+   * Function to handle navigation to the home screen
+   * This function uses the router to navigate to the home screen.
    */
   const handleHomePress = (): void => {
     router.push("/");

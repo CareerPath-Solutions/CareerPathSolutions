@@ -1,4 +1,3 @@
-// src/styles/AuthStyles.ts
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -31,6 +30,41 @@ const styles = StyleSheet.create({
     marginVertical: 24,
     borderRadius: 8,
   },
+  textInput: {
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 8,
+    marginVertical: 8,
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  primaryButton: {
+    backgroundColor: '#2196F3',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    width: "100%",
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
+  linkButton: {
+    marginTop: 15,
+  },
+  linkText: {
+    color: "#2563EB",
+    textAlign: 'center',
+  },
   githubButton: {
     backgroundColor: '#24292e',
     paddingVertical: 12,
@@ -40,14 +74,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  buttonDisabled: {
-    opacity: 0.7,
   },
   signOutButton: {
     backgroundColor: '#24292e',
@@ -64,7 +90,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   }
-
 });
 
 export default styles;

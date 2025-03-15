@@ -14,7 +14,6 @@ import { userService } from "../business/services/userService";
 import styles1 from "../src/styles/JobRatingStyles";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
-// We'll use the existing interface until we update user.types.ts
 interface Preferences {
   health: number;
   vision: number;
@@ -25,8 +24,12 @@ interface Preferences {
   religiousLeave: number;
 }
 
+/**
+ *
+ * @returns PreferencesScreen component
+ * This component allows users to set their preferences for various benefits.
+ */
 const PreferencesScreen = () => {
-  // Move the router hook inside the component
   const router = useRouter();
 
   const [preferences, setPreferences] = useState<Preferences>({
@@ -53,6 +56,10 @@ const PreferencesScreen = () => {
     router.push("/");
   };
 
+  /**
+   * Loads user preferences from the server
+   * and sets the initial state for the preferences.
+   */
   const loadPreferences = async () => {
     try {
       setLoading(true);
@@ -67,6 +74,11 @@ const PreferencesScreen = () => {
     }
   };
 
+  /**
+   *
+   * @returns void
+   * Saves the user preferences to the server.
+   */
   const savePreferences = async () => {
     if (!userId) return;
 
@@ -81,7 +93,11 @@ const PreferencesScreen = () => {
       setSaving(false);
     }
   };
-
+  /**
+   *
+   * @param preference
+   * @param value
+   */
   const handlePreferenceChange = (
     preference: keyof Preferences,
     value: number

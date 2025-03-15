@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { useRouter } from "expo-router";
-import { RatingDisplay, User } from '../core/types/user.types';
+import { RatingDisplay, User } from "../core/types/user.types";
 import { userService } from "../business/services/userService";
 import { userRepository } from "../data/repositories/userRepository";
 import styles from "../src/styles/MainPageStyles";
 import authStyles from "../src/styles/AuthStyles";
 
+/**
+ *
+ * @returns MainMenu component
+ * This component serves as the main menu for the application, allowing users to navigate to different sections.
+ */
 export default function MainMenu() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -16,32 +21,32 @@ export default function MainMenu() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Get authenticated user from repository
-        const authenticatedUser = await userRepository.getCurrentAuthenticatedUser();
-        
+        const authenticatedUser =
+          await userRepository.getCurrentAuthenticatedUser();
+
         if (authenticatedUser) {
-          // Use service layer to check authentication
-          const dbUser = await userService.checkAuthentication(authenticatedUser);
-          
+          const dbUser = await userService.checkAuthentication(
+            authenticatedUser
+          );
+
           if (dbUser) {
             setCurrentUser(dbUser);
-            
-            // Fetch previous offers
-            const offers = await userService.getPreviousOffers(dbUser.user_name);
+
+            const offers = await userService.getPreviousOffers(
+              dbUser.user_name
+            );
             setPreviousOffers(offers);
           } else {
-            // If no user, sign out and redirect
             await userRepository.signOut();
-            router.replace('/');
+            router.replace("/");
           }
         } else {
-          // No authenticated user
-          router.replace('/');
+          router.replace("/");
         }
       } catch (error) {
-        console.error('Authentication check error:', error);
+        console.error("Authentication check error:", error);
         await userRepository.signOut();
-        router.replace('/');
+        router.replace("/");
       } finally {
         setLoading(false);
       }
@@ -49,9 +54,12 @@ export default function MainMenu() {
 
     checkAuth();
 
+    /**
+     * Set up a listener for authentication state changes
+     */
     const { data: authListener } = userRepository.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') {
-        router.replace('/');
+      if (event === "SIGNED_OUT") {
+        router.replace("/");
       }
     });
 
@@ -60,6 +68,11 @@ export default function MainMenu() {
     };
   }, []);
 
+  /**
+   *
+   * @returns void
+   * Handles navigation to the previous job offers screen
+   */
   const handlePreviousOffers = () => {
     if (!currentUser) {
       console.log("MainMenu: No current user, not navigating");
@@ -68,10 +81,14 @@ export default function MainMenu() {
 
     router.push({
       pathname: "/PreviousJobOffers",
-      params: { username: currentUser.user_name }
+      params: { username: currentUser.user_name },
     } as any);
   };
-
+  /**
+   *
+   * @returns void
+   * Handles navigation to the new job offer form
+   */
   const handleNewJobOffer = () => {
     if (!currentUser) {
       console.log("MainMenu: No current user, not navigating");
@@ -80,7 +97,7 @@ export default function MainMenu() {
 
     router.push({
       pathname: "/NewJobOfferForm",
-      params: { username: currentUser.user_name }
+      params: { username: currentUser.user_name },
     } as any);
   };
 
@@ -96,7 +113,7 @@ export default function MainMenu() {
 
   if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: 'center' }]}>
+      <View style={[styles.container, { justifyContent: "center" }]}>
         <Text>Loading...</Text>
       </View>
     );
@@ -121,16 +138,10 @@ export default function MainMenu() {
       </Text>
 
       <View style={styles.twoBtns}>
-        <TouchableOpacity
-          style={styles.button1}
-          onPress={handleNewJobOffer}
-        >
+        <TouchableOpacity style={styles.button1} onPress={handleNewJobOffer}>
           <Text style={styles.buttonText1}>New Job Offer</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handlePreviousOffers}
-        >
+        <TouchableOpacity style={styles.button} onPress={handlePreviousOffers}>
           <Text style={styles.buttonText}>Previous Offers</Text>
         </TouchableOpacity>
       </View>

@@ -1,4 +1,3 @@
-// core/types/jobOffer.types.ts
 export interface JobOfferDetails {
     company_name: string;
     position: string;

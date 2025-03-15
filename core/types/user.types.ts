@@ -1,6 +1,8 @@
 export interface User {
     id: string;
     user_name: string;
+    auth_id: string;   // Add this for authentication ID
+    email?: string; 
     created_at: Date;
 }
 

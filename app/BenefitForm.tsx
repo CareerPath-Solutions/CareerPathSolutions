@@ -5,6 +5,11 @@ import styles from "../src/styles/BenefitsFormStyles";
 import { BenefitSelections, CheckboxProps } from "../core/types/benefits.types";
 import { benefitsService } from "../business/services/benefitsService";
 
+/**
+ *
+ * @returns BenefitForm component
+ * This component allows users to select benefits and submit them for evaluation.
+ */
 export default function BenefitForm() {
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -25,6 +30,11 @@ export default function BenefitForm() {
     retirement_401k: false,
   });
 
+  /**
+   *
+   * @param key - The key of the benefit selection to toggle
+   * This function toggles the selected state of a checkbox.
+   */
   const handleCheckboxChange = (key: keyof BenefitSelections) => {
     setSelections((prev) => ({
       ...prev,
@@ -59,6 +69,12 @@ export default function BenefitForm() {
     }
   };
 
+  /**
+   *
+   * @param param0 - The props for the CustomCheckbox component
+   * @param label - The label for the checkbox
+   * @returns
+   */
   const CustomCheckbox = ({ label, checked, onPress }: CheckboxProps) => (
     <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
       <View style={styles.checkbox}>

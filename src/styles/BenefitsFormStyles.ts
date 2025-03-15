@@ -1,4 +1,3 @@
-// BenefitsFormStyles.ts
 import { StyleSheet, ViewStyle, TextStyle } from "react-native";
 
 interface BenefitsFormStyles {

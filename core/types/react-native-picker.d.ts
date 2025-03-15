@@ -1,4 +1,3 @@
-// filepath: /c:/Users/fujid/Desktop/CSB430/JobOfferRatingTool/JobOfferTool/types/react-native-picker.d.ts
 declare module '@react-native-picker/picker' {
     import { ComponentType } from 'react';
     import { ViewProps } from 'react-native';

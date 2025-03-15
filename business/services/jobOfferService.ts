@@ -1,4 +1,3 @@
-// business/services/jobOfferService.ts
 import { jobOfferRepository } from '../../data/repositories/jobOfferRepository';
 import { JobOfferDetails } from '../../core/types/jobOffer.types';
 export const jobOfferService = {
@@ -15,7 +14,6 @@ export const jobOfferService = {
     return result;
   },
 
-  // Add the new method for parsing offers
   parseOffers(offersJson: string | string[] | undefined): JobOfferDetails[] {
     if (!offersJson) {
       return [];

@@ -4,41 +4,49 @@ import { useRouter } from "expo-router";
 import { useTheme } from "@/core/hooks/ThemedContext";
 import SettingsStyles from "../src/styles/SettingsStyle";
 import ClearHistoryModal from "../src/components/ClearHistoryModal";
-import JobHistoryService from "../business/services/JobHistoryService";
+import JobHistoryService from "../business/services/JobHistoryServices";
 
-
+/**
+ *
+ * @returns SettingsScreen component
+ * This component allows users to manage their account settings, including dark mode, logout, and clearing job history.
+ */
 export default function SettingsScreen() {
   const router = useRouter();
   const { theme, isDark, setDarkMode } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
   const jobHistoryService = new JobHistoryService();
 
-  // Add local state to ensure the Switch works properly
+  /**
+   * State variable to manage local dark mode
+   */
   const [localDarkMode, setLocalDarkMode] = useState(isDark);
 
-  // Sync the local state with the theme context
   useEffect(() => {
     setDarkMode(localDarkMode);
   }, [localDarkMode]);
 
-  // Sync the local state when isDark changes from context
   useEffect(() => {
     setLocalDarkMode(isDark);
   }, [isDark]);
 
-  // Handle logout
+  //TODO: Implement the logout functionality
   const handleLogout = () => {
-    // Add your logout logic here
     console.log("Logging out...");
-    // Navigate to login screen or perform auth logout
   };
 
-  // Show clear history confirmation modal
+  /**
+   * Function to show the clear job history modal
+   * This function sets the modalVisible state to true, triggering the modal to appear.
+   */
   const showClearHistoryModal = () => {
     setModalVisible(true);
   };
 
-  // Handle clear job history
+  /**
+   * Function to handle clearing job history
+   * This function calls the job history service to clear the job history.
+   */
   const handleClearJobHistory = async () => {
     try {
       // Call the service layer to clear job history
@@ -56,17 +64,13 @@ export default function SettingsScreen() {
     }
   };
 
-  // Navigate to preferences
+  /**
+   * Function to navigate to the preferences screen
+   * This function uses the router to navigate to the preferences screen.
+   */
   const goToPreferences = () => {
-    // Navigate to preferences screen
     router.push("/PreferencesScreen");
   };
-
-  //   // Navigate to help & FAQ
-  //   const goToHelpFAQ = () => {
-  //     // Navigate to help & FAQ screen
-  //     router.push("/HelpFAQ");
-  //   };
 
   return (
     <View
@@ -78,7 +82,7 @@ export default function SettingsScreen() {
       {/* Profile Image */}
       <View style={SettingsStyles.profileImageContainer}>
         <Image
-          source={{ uri: "https://via.placeholder.com/80" }} // Replace with actual user image
+          source={{ uri: "https://via.placeholder.com/80" }} //TODO: Replace with actual profile image URL
           style={SettingsStyles.profileImage}
         />
       </View>
@@ -88,7 +92,7 @@ export default function SettingsScreen() {
         Account Settings
       </Text>
 
-      {/* Dark Mode Toggle - FIXED VERSION */}
+      {/* Dark Mode Toggle */}
       <View
         style={[
           SettingsStyles.settingRow,
@@ -106,7 +110,6 @@ export default function SettingsScreen() {
         />
       </View>
 
-      {/* Log Out Button */}
       <TouchableOpacity
         style={[
           SettingsStyles.button,
@@ -121,7 +124,6 @@ export default function SettingsScreen() {
         </Text>
       </TouchableOpacity>
 
-      {/* Clear Job History Button */}
       <TouchableOpacity
         style={[
           SettingsStyles.button,
@@ -136,14 +138,12 @@ export default function SettingsScreen() {
         </Text>
       </TouchableOpacity>
 
-      {/* Clear History Confirmation Modal */}
       <ClearHistoryModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onConfirm={handleClearJobHistory}
       />
 
-      {/* Job Preferences Section */}
       <View style={SettingsStyles.preferencesSection}>
         <Text style={[SettingsStyles.sectionTitle, { color: theme.textColor }]}>
           Job Preferences
@@ -174,5 +174,6 @@ export default function SettingsScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+    </View>
   );
-};
+}

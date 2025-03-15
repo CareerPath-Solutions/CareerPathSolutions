@@ -1,4 +1,3 @@
-// src/components/styles/JobRatingStyles.ts
 import { StyleSheet, ViewStyle, TextStyle, ImageStyle } from "react-native";
 
 interface JobRatingStyles {

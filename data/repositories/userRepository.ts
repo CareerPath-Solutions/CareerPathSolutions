@@ -1,93 +1,9 @@
 import { supabase } from '../database/supabase';
-import { User, Rating, UserPreferences } from '../../core/types/user.types';
+import { User, Rating } from '../../core/types/user.types';
 
-/**
- * [userRepository description]
- *
- * @var {[type]}
- */
 export const userRepository = {
-    async saveUserPreferences(userId: string, preferences: UserPreferences): Promise<void> {
-        // Check if preferences already exist
-        const { data: existing, error: checkError } = await supabase
-            .from("user_preferences")
-            .select("id")
-            .eq("user_id", userId)
-            .single();
-        
-        if (checkError && checkError.code !== 'PGRST116') throw checkError;
-        
-        const preferencesData = {
-            user_id: userId,
-            health: preferences.health,
-            vision: preferences.vision,
-            vacation: preferences.vacation,
-            sick: preferences.sick,
-            maternity: preferences.maternity,
-            paternity: preferences.paternity,
-            religious_leave: preferences.religiousLeave,
-            updated_at: new Date()
-        };
-        
-        if (existing) {
-            // Update existing preferences
-            const { error } = await supabase
-                .from("user_preferences")
-                .update(preferencesData)
-                .eq("user_id", userId);
-            
-            if (error) throw error;
-        } else {
-            // Insert new preferences
-            const { error } = await supabase
-                .from("user_preferences")
-                .insert({
-                    ...preferencesData,
-                    created_at: new Date()
-                });
-            
-            if (error) throw error;
-        }
-    },
     /**
-     * [getUserPreferences description]
-     *
-     * @param   {string<UserPreferences>}   userId  [userId description]
-     *
-     * @return  {Promise<UserPreferences>}          [return description]
-     */
-    async getUserPreferences(userId: string): Promise<UserPreferences | null> {
-        const { data, error } = await supabase
-            .from("user_preferences")
-            .select("*")
-            .eq("user_id", userId)
-            .single();
-        
-        if (error) {
-            // If no record found, return null instead of throwing
-            if (error.code === 'PGRST116') return null;
-            throw error;
-        }
-        
-        // Convert DB snake_case to app camelCase
-        if (data) {
-            return {
-                health: data.health,
-                vision: data.vision,
-                vacation: data.vacation,
-                sick: data.sick,
-                maternity: data.maternity,
-                paternity: data.paternity,
-                religiousLeave: data.religious_leave
-            };
-        }
-        
-        return null;
-    },
-    /**
-     * [getCurrentAuthenticatedUser description]
-     *
-     * @return  {[type]}  [return description]
+     * Get the currently authenticated user from Supabase
      */
     async getCurrentAuthenticatedUser() {
         const { data: { user } } = await supabase.auth.getUser();
@@ -95,51 +11,7 @@ export const userRepository = {
     },
 
     /**
-     * [getOrCreateGitHubUserByAuthId description]
-     *
-     * @param   {string}         authId    [authId description]
-     * @param   {string<User>}   username  [username description]
-     *
-     * @return  {Promise<User>}            [return description]
-     */
-    async getOrCreateGitHubUserByAuthId(authId: string, username: string): Promise<User> {
-        console.log('Starting repository function with auth ID:', authId);
-        try {
-            // Check if user exists
-            const { data: existingUser, error: findError } = await supabase
-                .from('users')
-                .select('*')
-                .eq('auth_id', authId)
-                .single();
-
-            console.log('Database query result:', existingUser ? 'User found' : 'User not found', findError ? `Error: ${findError.message}` : 'No error');
-
-            if (findError && findError.code !== 'PGRST116') {
-                console.error('Error finding user:', findError);
-                throw findError;
-            }
-
-            if (existingUser) {
-                console.log('Returning existing user');
-                return existingUser;
-            }
-
-            // Create new user if not found
-            console.log('Creating new user with username:', username);
-            return await this.createUser(username, authId);
-        } catch (error) {
-            console.error('Repository function error:', error);
-            throw error;
-        }
-    },
-
-    /**
-     * [createUser description]
-     *
-     * @param   {string}         username  [username description]
-     * @param   {string<User>}   authId    [authId description]
-     *
-     * @return  {Promise<User>}            [return description]
+     * Create a new user in the database
      */
     async createUser(username: string, authId: string): Promise<User> {
         const { data, error } = await supabase
@@ -157,11 +29,7 @@ export const userRepository = {
     },
 
     /**
-     * [getRatingsByUserId description]
-     *
-     * @param   {string<Rating>[]}   username  [username description]
-     *
-     * @return  {Promise<Rating>[]}            [return description]
+     * Get ratings by user ID
      */
     async getRatingsByUserId(username: string): Promise<Rating[]> {
         const { data: ratings, error } = await supabase
@@ -178,11 +46,7 @@ export const userRepository = {
     },
 
     /**
-     * [findUsersByUserName description]
-     *
-     * @param   {string}      username  [username description]
-     *
-     * @return  {<username>}            [return description]
+     * Find users by username (partial match)
      */
     async findUsersByUserName(username: string) {
         const { data: userIds, error } = await supabase
@@ -194,13 +58,9 @@ export const userRepository = {
         return userIds;
     },
 
-   /**
-    * [getUserByUsername description]
-    *
-    * @param   {string<User>}   username  [username description]
-    *
-    * @return  {Promise<User>}            [return description]
-    */
+    /**
+     * Get a user by their exact username
+     */
     async getUserByUsername(username: string): Promise<User | null> {
         const { data, error } = await supabase
             .from('users')
@@ -217,13 +77,49 @@ export const userRepository = {
         
         return data;
     },
+    
+    /**
+     * Get user by email
+     */
+    async getUserByEmail(email: string): Promise<User | null> {
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', email)
+            .single();
+            
+        if (error) {
+            if (error.code === 'PGRST116') { // No rows returned
+                return null;
+            }
+            throw error;
+        }
+        
+        return data;
+    },
 
     /**
-     * [onAuthStateChange description]
-     *
-     * @param   {string}      callback  [callback description]
-     *
-     * @return  {<callback>}            [return description]
+     * Get user by ID
+     */
+    async getUserById(userId: string): Promise<User | null> {
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .single();
+            
+        if (error) {
+            if (error.code === 'PGRST116') { // No rows returned
+                return null;
+            }
+            throw error;
+        }
+        
+        return data;
+    },
+
+    /**
+     * Set up a listener for authentication state changes
      */
     onAuthStateChange(callback: (event: string) => void) {
         // Return the subscription object directly from Supabase
@@ -233,9 +129,7 @@ export const userRepository = {
     },
 
     /**
-     * [signOut description]
-     *
-     * @return  {[type]}  [return description]
+     * Sign out the current user
      */
     async signOut() {
         const { error } = await supabase.auth.signOut();
@@ -244,51 +138,86 @@ export const userRepository = {
     },
 
     /**
-     * [exchangeCodeForSession description]
-     *
-     * @param   {string}  code  [code description]
-     *
-     * @return  {[type]}        [return description]
+     * Sign in with email and password
      */
-    async exchangeCodeForSession(code: string) {
+    async signInWithEmail(email: string, password: string) {
         try {
-            const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
             
-            if (error) throw error;
-            return data.user;
+            if (error) {
+                console.error('Email sign-in error:', error);
+                throw error;
+            }
+            
+            return data;
         } catch (error) {
-            console.error("Error exchanging code for session:", error);
+            console.error("Sign in error:", error);
             throw error;
         }
     },
 
     /**
-     * [signInWithGitHub description]
-     *
-     * @param   {github}  provider  [provider description]
-     *
-     * @return  {[type]}            [return description]
+     * Sign up with email and password
      */
-    async signInWithGitHub(provider: 'github') {
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            provider,
-            options: {
-                redirectTo: window.location.origin
+    async signUpWithEmail(email: string, password: string, username: string) {
+        try {
+            // Create the auth user
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        user_name: username
+                    }
+                }
+            });
+            
+            if (error) {
+                console.error('Email sign-up error:', error);
+                throw error;
             }
-        });
-        
-        if (error) throw error;
-        return data;
+            
+            // If account creation was successful, create a profile in your users table
+            if (data?.user) {
+                await this.createUser(
+                    username, 
+                    data.user.id
+                );
+            }
+            
+            return data;
+        } catch (error) {
+            console.error("Sign up error:", error);
+            throw error;
+        }
     },
 
     /**
-     * [updateUserProfile description]
-     *
-     * @param   {string}                    userId   [userId description]
-     * @param   {Partial<User>}             updates  [updates description]
-     * @param   {undefined<Promise><User>}  User     [User description]
-     *
-     * @return  {<User><Promise><User>}              [return description]
+     * Reset password
+     */
+    async resetPassword(email: string) {
+        try {
+            const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: 'joboffertool://reset-password'
+            });
+            
+            if (error) {
+                console.error('Password reset error:', error);
+                throw error;
+            }
+            
+            return data;
+        } catch (error) {
+            console.error("Password reset error:", error);
+            throw error;
+        }
+    },
+
+    /**
+     * Update user profile
      */
     async updateUserProfile(userId: string, updates: Partial<User>): Promise<User> {
         const { data, error } = await supabase
@@ -303,11 +232,7 @@ export const userRepository = {
     },
 
     /**
-     * [deleteUser description]
-     *
-     * @param   {string<boolean>}   userId  [userId description]
-     *
-     * @return  {Promise<boolean>}          [return description]
+     * Delete a user account
      */
     async deleteUser(userId: string): Promise<boolean> {
         const { error } = await supabase
@@ -317,5 +242,35 @@ export const userRepository = {
             
         if (error) throw error;
         return true;
+    },
+    
+    /**
+     * Get or create a user by their auth ID
+     * (Generic version that works with any auth method)
+     */
+    async getOrCreateUserByAuthId(authId: string, username: string): Promise<User> {
+        try {
+            // Check if user exists
+            const { data: existingUser, error: findError } = await supabase
+                .from('users')
+                .select('*')
+                .eq('auth_id', authId)
+                .single();
+
+            if (findError && findError.code !== 'PGRST116') {
+                console.error('Error finding user:', findError);
+                throw findError;
+            }
+
+            if (existingUser) {
+                return existingUser;
+            }
+
+            // Create new user if not found
+            return await this.createUser(username, authId);
+        } catch (error) {
+            console.error('Repository function error:', error);
+            throw error;
+        }
     }
-};
+}

@@ -1,8 +1,6 @@
-// // src/components/PreviousJobOffers.tsx
-
 import { ScrollView, Text, Image, TouchableOpacity, View } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import styles from "../src/styles/PreviousJobOffersStyle";
 import { RatingDisplay } from "../core/types/user.types";
 import { userService } from "../business/services/userService";
@@ -12,25 +10,28 @@ export default function PreviousJobOffers() {
   const router = useRouter();
   const [ratings, setRatings] = useState<RatingDisplay[]>([]);
   const username = params.username as string;
- 
+
   useEffect(() => {
     async function fetchRatings() {
       try {
         const userRatings = await userService.getPreviousOffers(username);
         setRatings(userRatings);
       } catch (error) {
-        console.error('Error fetching ratings:', error);
+        console.error("Error fetching ratings:", error);
       }
     }
     fetchRatings();
-  }, [username]); 
+  }, [username]);
 
   const handleHomePress = () => {
     router.push("/");
   };
 
   return (
-    <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.container}
+    >
       <View style={styles.header}>
         <TouchableOpacity style={styles.homeBtn} onPress={handleHomePress}>
           <Image

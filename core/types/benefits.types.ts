@@ -1,5 +1,3 @@
-// /core/types/benefits.types.ts
-
 export interface CheckboxProps {
     label: string;
     checked: boolean;
