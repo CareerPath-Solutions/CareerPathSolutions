@@ -1,18 +1,5 @@
 import { userRepository } from '../../data/repositories/userRepository';
-import { RatingDisplay, User } from '../../core/types/user.types';
-
-/**
- * [UserPreferences description]
- */
-interface UserPreferences {
-  health: number;
-  vision: number;
-  vacation: number;
-  sick: number;
-  maternity: number;
-  paternity: number;
-  religiousLeave: number;
-}
+import { RatingDisplay, User, UserPreferences } from '../../core/types/user.types';
 
 /**
  * [DEFAULT_PREFERENCES description]
@@ -256,16 +243,20 @@ export const userService = {
   /**
    * [saveUserPreferences description]
    *
-   * @param   {string}                 userId       [userId description]
-   * @param   {UserPreferences<User>}  preferences  [preferences description]
+   * @param   {string}                            userId       [userId description]
+   * @param   {UserPreferences<UserPreferences>}  preferences  [preferences description]
    *
-   * @return  {Promise<User>}                       [return description]
+   * @return  {Promise<UserPreferences>}                       [return description]
    */
-  async saveUserPreferences(userId: string, preferences: UserPreferences): Promise<User> {
-    // Using type assertion to handle preferences in updates
-    return await userRepository.updateUserProfile(userId, { preferences } as Partial<User>);
+  async saveUserPreferences(userId: string, preferences: UserPreferences): Promise<UserPreferences> {
+    try {
+      // Save to user_preferences table instead of users table
+      return await userRepository.saveUserPreferences(userId, preferences);
+    } catch (error) {
+      console.error("Error saving user preferences:", error);
+      throw error;
+    }
   },
-
   _extractUsername(authenticatedUser: any): string {
     return authenticatedUser.user_metadata?.user_name ||
            authenticatedUser.email?.split('@')[0] ||

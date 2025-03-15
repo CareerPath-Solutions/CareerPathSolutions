@@ -1,5 +1,5 @@
 import { supabase } from '../database/supabase';
-import { User, Rating } from '../../core/types/user.types';
+import { User, Rating, UserPreferences } from '../../core/types/user.types';
 
 export const userRepository = {
     /**
@@ -272,5 +272,147 @@ export const userRepository = {
             console.error('Repository function error:', error);
             throw error;
         }
-    }
+    },
+    // async saveUserPreferences(userId: string, preferences: UserPreferences): Promise<UserPreferences> {
+    //     // Convert camelCase to snake_case for database
+    //     const dbPreferences = {
+    //       // Don't include ID in the data object
+    //       health: preferences.health,
+    //       vision: preferences.vision,
+    //       vacation: preferences.vacation,
+    //       sick: preferences.sick,
+    //       maternity: preferences.maternity,
+    //       paternity: preferences.paternity,
+    //       religious_leave: preferences.religiousLeave // Convert camelCase to snake_case
+    //     };
+        
+    //     // First check if preferences exist for this user
+    //     const { data: existingPrefs } = await supabase
+    //       .from('user_preferences')
+    //       .select('*')
+    //       .eq('id', userId)
+    //       .single();
+          
+    //     let result;
+        
+    //     if (existingPrefs) {
+    //       // Update existing preferences
+    //       const { data, error } = await supabase
+    //         .from('user_preferences')
+    //         .update(dbPreferences)
+    //         .eq('id', userId)
+    //         .select()
+    //         .single();
+            
+    //       if (error) throw error;
+          
+    //       // Convert snake_case back to camelCase for frontend
+    //       result = {
+    //         health: data.health,
+    //         vision: data.vision,
+    //         vacation: data.vacation,
+    //         sick: data.sick,
+    //         maternity: data.maternity,
+    //         paternity: data.paternity,
+    //         religiousLeave: data.religious_leave
+    //       };
+    //     } else {
+    //       // Insert new preferences with user_id as a foreign key instead of id as primary key
+    //       const { data, error } = await supabase
+    //         .from('user_preferences')
+    //         .insert([{
+    //           user_id: userId,  // Use user_id instead of id
+    //           ...dbPreferences
+    //         }])
+    //         .select()
+    //         .single();
+            
+    //       if (error) throw error;
+          
+    //       // Convert snake_case back to camelCase for frontend
+    //       result = {
+    //         health: data.health,
+    //         vision: data.vision,
+    //         vacation: data.vacation,
+    //         sick: data.sick,
+    //         maternity: data.maternity,
+    //         paternity: data.paternity,
+    //         religiousLeave: data.religious_leave
+    //       };
+    //     }
+        
+    //     return result as UserPreferences;
+    //   }
+    async saveUserPreferences(userId: string, preferences: UserPreferences): Promise<UserPreferences> {
+        console.log("Saving preferences for userId:", userId);
+        
+        try {
+          // First check if preferences exist for this user 
+          const { data: existingPrefs, error: checkError } = await supabase
+            .from('user_preferences')
+            .select('*')
+            .eq('user_id', userId)  // Important: query by user_id, not id
+            .single();
+          
+          let result;
+          
+          if (existingPrefs) {
+            // Update existing preferences
+            const { data, error } = await supabase
+              .from('user_preferences')
+              .update({
+                health: preferences.health,
+                vision: preferences.vision,
+                vacation: preferences.vacation,
+                sick: preferences.sick,
+                maternity: preferences.maternity,
+                paternity: preferences.paternity,
+                religious_leave: preferences.religiousLeave,
+                updated_at: new Date().toISOString()
+              })
+              .eq('user_id', userId)  // Important: update by user_id, not id
+              .select()
+              .single();
+            
+            if (error) throw error;
+            result = data;
+          } else {
+            // Insert new preferences with auto-generated UUID for id
+            const { data, error } = await supabase
+              .from('user_preferences')
+              .insert([{
+                // id is auto-generated as UUID
+                user_id: userId,  // Use userId for the foreign key
+                health: preferences.health,
+                vision: preferences.vision,
+                vacation: preferences.vacation, 
+                sick: preferences.sick,
+                maternity: preferences.maternity,
+                paternity: preferences.paternity,
+                religious_leave: preferences.religiousLeave,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              }])
+              .select()
+              .single();
+            
+            if (error) throw error;
+            result = data;
+          }
+          
+          // Convert snake_case back to camelCase for frontend
+          return {
+            health: result.health, 
+            vision: result.vision,
+            vacation: result.vacation,
+            sick: result.sick,
+            maternity: result.maternity,
+            paternity: result.paternity,
+            religiousLeave: result.religious_leave
+          } as UserPreferences;
+        } catch (error) {
+          console.error("Error in saveUserPreferences:", error);
+          throw error;
+        }
+      }
 }

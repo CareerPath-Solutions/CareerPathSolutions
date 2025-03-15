@@ -14,10 +14,12 @@ const PreferenceSlider = ({
   value,
   onChange,
 }: PreferenceSliderProps) => {
-  const renderTicks = () =>
-    Array(6)
-      .fill(0)
-      .map((_, index) => <View key={index} style={styles.tick} />);
+  // Create exactly 6 tick marks for values 0-5
+  const renderTicks = () => {
+    return Array.from({ length: 6 }, (_, index) => (
+      <View key={index} style={styles.tick} />
+    ));
+  };
 
   return (
     <View style={styles.container}>
@@ -32,8 +34,18 @@ const PreferenceSlider = ({
           value={value}
           onSlidingComplete={onChange}
         />
-        <View style={styles.scaleContainer}>
+        {/* Use a more precise layout for the scale numbers */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "100%",
+            paddingLeft: 0, // Align with first tick
+            paddingRight: 0, // Align with last tick
+          }}
+        >
           <Text style={styles.scaleText}>0</Text>
+          <View style={{ flex: 1 }}></View>
           <Text style={styles.scaleText}>5</Text>
         </View>
       </View>

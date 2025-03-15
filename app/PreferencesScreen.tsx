@@ -53,7 +53,8 @@ const PreferencesScreen = () => {
    * Handles navigation to the home screen
    */
   const handleHomePress = (): void => {
-    router.push("/");
+    //router.push("/MainMenu");
+    router.back();
   };
 
   /**
@@ -120,12 +121,24 @@ const PreferencesScreen = () => {
   return (
     <ScrollView style={styles.screen}>
       <View style={styles.container}>
-        <TouchableOpacity style={styles1.homeBtn} onPress={handleHomePress}>
-          <Image
-            source={require("../assets/images/HomeSymbol.png")}
-            style={styles1.homeIcon}
-          />
-        </TouchableOpacity>
+        <View style={{ position: "absolute", top: 10, left: 10, zIndex: 999 }}>
+          <TouchableOpacity
+            style={{
+              marginTop: 20,
+              marginLeft: 20,
+              marginBottom: 20,
+              backgroundColor: "#2196F3",
+              padding: 10,
+              borderRadius: 5,
+              alignSelf: "center",
+            }}
+            onPress={handleHomePress}
+          >
+            <Text style={{ color: "white", fontWeight: "bold" }}>
+              Back to Home
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <Text style={styles.title}>Preferences</Text>
         <Text>Set how important each factor is to you (1-5)</Text>
