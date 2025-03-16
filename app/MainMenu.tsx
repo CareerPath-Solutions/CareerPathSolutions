@@ -6,6 +6,7 @@ import { userService } from "../business/services/userService";
 import { userRepository } from "../data/repositories/userRepository";
 import styles from "../src/styles/MainPageStyles";
 import authStyles from "../src/styles/AuthStyles";
+import { useLocalSearchParams } from "expo-router";
 
 /**
  *
@@ -17,6 +18,8 @@ export default function MainMenu() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [previousOffers, setPreviousOffers] = useState<RatingDisplay[]>([]);
+  const params = useLocalSearchParams();
+  const passedUserId = params.userId;
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -114,7 +117,7 @@ export default function MainMenu() {
 
     router.push({
       pathname: "/PreferencesScreen",
-      params: { userId: currentUser.id },
+      params: { userId: passedUserId || currentUser.id },
     } as any);
   };
 

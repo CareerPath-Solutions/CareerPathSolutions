@@ -14,6 +14,9 @@ import { userService } from "../business/services/userService";
 import styles1 from "../src/styles/JobRatingStyles";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
+/**
+ * Interface for the preferences
+ */
 interface Preferences {
   health: number;
   vision: number;
@@ -31,7 +34,14 @@ interface Preferences {
  */
 const PreferencesScreen = () => {
   const router = useRouter();
+  const params = useLocalSearchParams();
+  //const passedUserId = params.userId as string;
 
+  console.log("[LIFECYCLE] PreferencesScreen component initialized");
+
+  /**
+   * State variables
+   */
   const [preferences, setPreferences] = useState<Preferences>({
     health: 3,
     vision: 3,
@@ -46,8 +56,9 @@ const PreferencesScreen = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("[DEBUGGING] PreferencesScreen mounting/re-mounting");
     loadPreferences();
-  }, []);
+  }, [router]); // Adding router as a dependency
 
   /**
    * Handles navigation to the home screen
@@ -59,17 +70,28 @@ const PreferencesScreen = () => {
 
   /**
    * Loads user preferences from the server
-   * and sets the initial state for the preferences.
    */
   const loadPreferences = async () => {
+    console.log("[LIFECYCLE] loadPreferences called");
     try {
+      console.log("[PreferencesScreen] Starting to load preferences");
       setLoading(true);
+
       const user = await userService.getOrCreateUser();
+      console.log("[PreferencesScreen] User retrieved:", user.id);
       setUserId(user.id);
+
+      console.log(
+        "[PreferencesScreen] Fetching preferences for user:",
+        user.id
+      );
       const userPreferences = await userService.getUserPreferences(user.id);
+      console.log("[PreferencesScreen] Preferences received:", userPreferences);
+      console.log("[LIFECYCLE] Setting preferences:", userPreferences);
+
       setPreferences(userPreferences);
     } catch (error) {
-      console.error("Error loading preferences:", error);
+      console.error("[PreferencesScreen] Error loading preferences:", error);
     } finally {
       setLoading(false);
     }
@@ -78,7 +100,6 @@ const PreferencesScreen = () => {
   /**
    *
    * @returns void
-   * Saves the user preferences to the server.
    */
   const savePreferences = async () => {
     if (!userId) return;
@@ -86,6 +107,7 @@ const PreferencesScreen = () => {
     try {
       setSaving(true);
       await userService.saveUserPreferences(userId, preferences);
+      console.log("[LIFECYCLE] Successfully saved preferences:", preferences); // Moved here
       alert("Preferences saved successfully!");
     } catch (error) {
       console.error("Error saving preferences:", error);
@@ -94,6 +116,7 @@ const PreferencesScreen = () => {
       setSaving(false);
     }
   };
+
   /**
    *
    * @param preference

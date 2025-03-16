@@ -211,31 +211,52 @@ export const userService = {
    *
    * @return  {<Promise><User>}[return description]
    */
+  // async getOrCreateUser(): Promise<User> {
+  //   const authenticatedUser = await this.getCurrentAuthenticatedUser();
+  //   if (!authenticatedUser) throw new Error("Not authenticated");
+
+  //   const dbUser = await this.checkAuthentication(authenticatedUser);
+  //   if (!dbUser) throw new Error("Failed to get or create user");
+
+  //   return dbUser;
+  // },
+
   async getOrCreateUser(): Promise<User> {
+    console.log("[AUTH DEBUGGING] Starting getOrCreateUser");
+    
     const authenticatedUser = await this.getCurrentAuthenticatedUser();
+    console.log("[AUTH DEBUGGING] authenticatedUser:", authenticatedUser ? authenticatedUser.id : "null");
+    
     if (!authenticatedUser) throw new Error("Not authenticated");
-
+  
+    console.log("[AUTH DEBUGGING] Calling checkAuthentication");
     const dbUser = await this.checkAuthentication(authenticatedUser);
+    console.log("[AUTH DEBUGGING] checkAuthentication returned user:", dbUser ? dbUser.id : "null");
+    
     if (!dbUser) throw new Error("Failed to get or create user");
-
+    
+    console.log("[AUTH DEBUGGING] Final user ID being returned:", dbUser.id);
     return dbUser;
   },
 
-  /**
-   * [getUserPreferences description]
-   *
-   * @param   {string<UserPreferences>}   userId  [userId description]
-   *
-   * @return  {Promise<UserPreferences>}          [return description]
-   */
   async getUserPreferences(userId: string): Promise<UserPreferences> {
+    console.log("[SERVICE] getUserPreferences called with userId:", userId, "type:", typeof userId);
+    
     try {
-      const user = await userRepository.getUserById(userId);
-      // Using type assertion to access preferences safely, falling back to defaults if not present
-      const userPrefs = (user as any)?.preferences as UserPreferences | undefined;
-      return userPrefs || DEFAULT_PREFERENCES;
+      // Get preferences from the user_preferences table instead of the users table
+      const userPrefs = await userRepository.getUserPreferencesById(userId);
+      console.log("[SERVICE] Preferences retrieved:", userPrefs ? "Found" : "Not found");
+      
+      if (userPrefs) {
+        console.log("[SERVICE] Returning user preferences:", userPrefs);
+        return userPrefs;
+      } else {
+        console.log("[SERVICE] No preferences found, returning defaults:", DEFAULT_PREFERENCES);
+        return DEFAULT_PREFERENCES;
+      }
     } catch (error) {
-      console.error("Error getting user preferences:", error);
+      console.error("[SERVICE] Error getting user preferences:", error);
+      console.log("[SERVICE] Returning default preferences due to error");
       return DEFAULT_PREFERENCES;
     }
   },
