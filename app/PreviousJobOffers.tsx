@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import styles from "../src/styles/PreviousJobOffersStyle";
 import { RatingDisplay } from "../core/types/user.types";
 import { userService } from "../business/services/userService";
+import { useTheme } from "../core/hooks/ThemedContext";
 
 export default function PreviousJobOffers() {
   const params = useLocalSearchParams();
   const router = useRouter();
+  const { theme, isDark } = useTheme();
   const [ratings, setRatings] = useState<RatingDisplay[]>([]);
   const username = params.username as string;
 
@@ -29,8 +31,11 @@ export default function PreviousJobOffers() {
 
   return (
     <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.container}
+      style={[styles.scrollView, { backgroundColor: theme.backgroundColor }]}
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: theme.backgroundColor },
+      ]}
     >
       <View style={styles.header}>
         <TouchableOpacity style={styles.homeBtn} onPress={handleHomePress}>
@@ -39,17 +44,25 @@ export default function PreviousJobOffers() {
             style={styles.homeIcon}
           />
         </TouchableOpacity>
-        <Text style={styles.heading}>Previous Job Offers</Text>
+        <Text style={[styles.heading, { color: theme.textColor }]}>
+          Previous Job Offers
+        </Text>
       </View>
       {ratings.length > 0 ? (
         ratings.map((rating, index) => (
           <View key={index} style={styles.gradeContainer}>
-            <Text style={styles.label}>{rating.company}</Text>
-            <Text style={styles.grade}>{rating.grade}</Text>
+            <Text style={[styles.label, { color: theme.textColor }]}>
+              {rating.company}
+            </Text>
+            <Text style={[styles.grade, { color: theme.textColor }]}>
+              {rating.grade}
+            </Text>
           </View>
         ))
       ) : (
-        <Text style={styles.noOffersText}>
+        <Text
+          style={[styles.noOffersText, { color: theme.secondaryTextColor }]}
+        >
           No previous job offers found for this username
         </Text>
       )}

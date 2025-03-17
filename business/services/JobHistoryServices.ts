@@ -8,8 +8,9 @@ class JobHistoryService {
   }
 
   /**
-   * Clear all job history for the current user
-   * Business logic layer for clearing job history
+   * [clearJobHistory description]
+   *
+   * @return  {Promise<boolean>}[return description]
    */
   async clearJobHistory(): Promise<boolean> {
     try {
@@ -21,8 +22,11 @@ class JobHistoryService {
   }
 
   /**
-   * Get job history for the current user
-   * @param userId - The ID of the current user
+   * [getUserJobHistory description]
+   *
+   * @param   {string<any>[]}   userId  [userId description]
+   *
+   * @return  {Promise<any>[]}          [return description]
    */
   async getUserJobHistory(userId: string): Promise<any[]> {
     try {

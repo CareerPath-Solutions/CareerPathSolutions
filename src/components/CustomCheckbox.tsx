@@ -31,6 +31,11 @@ interface CheckboxProps {
   onPress: () => void;
 }
 
+/**
+ *
+ * @param param0
+ * @returns
+ */
 export const CustomCheckbox = ({ label, checked, onPress }: CheckboxProps) => (
   <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
     <View style={styles.checkbox}>

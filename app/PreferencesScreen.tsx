@@ -13,6 +13,7 @@ import { styles } from "../src/styles/PreferencesScreenStyles";
 import { userService } from "../business/services/userService";
 import styles1 from "../src/styles/JobRatingStyles";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useTheme } from "../core/hooks/ThemedContext";
 
 /**
  * Interface for the preferences
@@ -35,6 +36,7 @@ interface Preferences {
 const PreferencesScreen = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { theme, isDark } = useTheme();
   //const passedUserId = params.userId as string;
 
   console.log("[LIFECYCLE] PreferencesScreen component initialized");
@@ -64,8 +66,7 @@ const PreferencesScreen = () => {
    * Handles navigation to the home screen
    */
   const handleHomePress = (): void => {
-    //router.push("/MainMenu");
-    router.back();
+    router.push("/MainMenu");
   };
 
   /**
@@ -142,64 +143,79 @@ const PreferencesScreen = () => {
   }
 
   return (
-    <ScrollView style={styles.screen}>
-      <View style={styles.container}>
+    <ScrollView
+      style={[styles.screen, { backgroundColor: theme.backgroundColor }]}
+    >
+      <View
+        style={[styles.container, { backgroundColor: theme.backgroundColor }]}
+      >
         <View style={{ position: "absolute", top: 10, left: 10, zIndex: 999 }}>
           <TouchableOpacity
             style={{
               marginTop: 20,
               marginLeft: 20,
               marginBottom: 20,
-              backgroundColor: "#2196F3",
+              backgroundColor: theme.buttonBackgroundColor,
               padding: 10,
               borderRadius: 5,
               alignSelf: "center",
             }}
             onPress={handleHomePress}
           >
-            <Text style={{ color: "white", fontWeight: "bold" }}>
+            <Text style={{ color: theme.buttonTextColor, fontWeight: "bold" }}>
               Back to Home
             </Text>
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.title}>Preferences</Text>
-        <Text>Set how important each factor is to you (1-5)</Text>
+        <Text style={[styles.title, { color: theme.textColor }]}>
+          Preferences
+        </Text>
+        <Text style={{ color: theme.secondaryTextColor }}>
+          Set how important each factor is to you (1-5)
+        </Text>
 
         <PreferenceSlider
           label="Health"
           value={preferences.health}
           onChange={(value) => handlePreferenceChange("health", value)}
+          theme={theme}
         />
         <PreferenceSlider
           label="Vision"
           value={preferences.vision}
           onChange={(value) => handlePreferenceChange("vision", value)}
+          theme={theme}
         />
         <PreferenceSlider
           label="Vacation"
           value={preferences.vacation}
           onChange={(value) => handlePreferenceChange("vacation", value)}
+          theme={theme}
         />
         <PreferenceSlider
           label="Sick"
           value={preferences.sick}
           onChange={(value) => handlePreferenceChange("sick", value)}
+          theme={theme}
         />
         <PreferenceSlider
           label="Maternity"
           value={preferences.maternity}
           onChange={(value) => handlePreferenceChange("maternity", value)}
+          theme={theme}
         />
         <PreferenceSlider
           label="Paternity"
           value={preferences.paternity}
           onChange={(value) => handlePreferenceChange("paternity", value)}
+          theme={theme}
         />
         <PreferenceSlider
           label="Religious Leave"
           value={preferences.religiousLeave}
           onChange={(value) => handlePreferenceChange("religiousLeave", value)}
+          theme={theme}
         />
 
         <Button

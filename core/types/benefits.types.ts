@@ -1,9 +1,15 @@
+/**
+ * [CheckboxProps description]
+ */
 export interface CheckboxProps {
     label: string;
     checked: boolean;
     onPress: () => void;
   }
   
+  /**
+   * [BenefitSelections description]
+   */
   export interface BenefitSelections {
     health_care: boolean;
     vision: boolean;

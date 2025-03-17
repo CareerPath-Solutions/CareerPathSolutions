@@ -4,9 +4,12 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { View, Text } from "react-native";
+import { ThemeProvider, useTheme } from "../core/hooks/ThemedContext";
 
 // Keep splash screen visible while we initialize
 SplashScreen.preventAutoHideAsync();
+
+type UUID = string;
 
 // Define route param types
 export type AppParamList = {
@@ -21,6 +24,7 @@ export type AppParamList = {
     salary: number;
     position: string;
   };
+  Settings: { userId: UUID };
 };
 
 // Make types available globally
@@ -41,9 +45,7 @@ export default function Layout() {
   useEffect(() => {
     async function prepare() {
       try {
-        // Add any initialization logic here
-        // For example, loading fonts, making API calls, etc.
-        await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate loading time
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         setIsReady(true);
       } catch (e) {
         console.warn(e);
@@ -63,58 +65,66 @@ export default function Layout() {
 
   if (error) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text>Error: {error.message}</Text>
       </View>
     );
   }
 
   return (
-    <>
-      <StatusBar style="auto" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: "#F0F4FF" },
-        }}
-      >
-        <Stack.Screen
-          name="index"
-          options={{
-            title: "Authentication",
+    <ThemeProvider>
+      <>
+        <StatusBar style="auto" />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: "#F0F4FF" },
           }}
-        />
-        <Stack.Screen
-          name="MainMenu"
-          options={{
-            title: "Home",
-          }}
-        />
-        <Stack.Screen
-          name="PreviousJobOffers"
-          options={{
-            title: "Previous Offers",
-          }}
-        />
-        <Stack.Screen
-          name="JobRating"
-          options={{
-            title: "Job Rating",
-          }}
-        />
-        <Stack.Screen
-          name="NewJobOfferForm"
-          options={{
-            title: "New Job Offer",
-          }}
-        />
-        <Stack.Screen
-          name="BenefitForm"
-          options={{
-            title: "Benefits",
-          }}
-        />
-      </Stack>
-    </>
+        >
+          <Stack.Screen
+            name="index"
+            options={{
+              title: "Authentication",
+            }}
+          />
+          <Stack.Screen
+            name="MainMenu"
+            options={{
+              title: "Home",
+            }}
+          />
+          <Stack.Screen
+            name="PreviousJobOffers"
+            options={{
+              title: "Previous Offers",
+            }}
+          />
+          <Stack.Screen
+            name="JobRating"
+            options={{
+              title: "Job Rating",
+            }}
+          />
+          <Stack.Screen
+            name="NewJobOfferForm"
+            options={{
+              title: "New Job Offer",
+            }}
+          />
+          <Stack.Screen
+            name="BenefitForm"
+            options={{
+              title: "Benefits",
+            }}
+          />
+          <Stack.Screen
+            name="Settings"
+            options={{
+              title: "Settings",
+            }}
+          />
+        </Stack>
+      </>
+    </ThemeProvider>
   );
 }

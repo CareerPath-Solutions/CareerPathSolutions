@@ -4,6 +4,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import styles from "../src/styles/BenefitsFormStyles";
 import { BenefitSelections, CheckboxProps } from "../core/types/benefits.types";
 import { benefitsService } from "../business/services/benefitsService";
+import { useTheme } from "../core/hooks/ThemedContext";
 
 /**
  *
@@ -13,6 +14,7 @@ import { benefitsService } from "../business/services/benefitsService";
 export default function BenefitForm() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { theme, isDark } = useTheme();
   const companyName = String(params.company_name);
   const username = String(params.username);
   const offeredSalary = Number(params.salary);
@@ -77,19 +79,34 @@ export default function BenefitForm() {
    */
   const CustomCheckbox = ({ label, checked, onPress }: CheckboxProps) => (
     <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
-      <View style={styles.checkbox}>
-        {checked && <View style={styles.checkboxInner} />}
+      <View style={[styles.checkbox, { borderColor: theme.textColor }]}>
+        {checked && (
+          <View
+            style={[
+              styles.checkboxInner,
+              { backgroundColor: theme.buttonBackgroundColor },
+            ]}
+          />
+        )}
       </View>
-      <Text style={styles.checkboxLabel}>{label}</Text>
+      <Text style={[styles.checkboxLabel, { color: theme.textColor }]}>
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>New Job Offer Details</Text>
-      <Text style={styles.subheading}>Please Select All That Apply</Text>
+    <View
+      style={[styles.container, { backgroundColor: theme.backgroundColor }]}
+    >
+      <Text style={[styles.heading, { color: theme.textColor }]}>
+        New Job Offer Details
+      </Text>
+      <Text style={[styles.subheading, { color: theme.secondaryTextColor }]}>
+        Please Select All That Apply
+      </Text>
 
-      <Text style={styles.label}>Benefits:</Text>
+      <Text style={[styles.label, { color: theme.textColor }]}>Benefits:</Text>
       <CustomCheckbox
         label="Health Care"
         checked={selections.health_care}
@@ -111,7 +128,7 @@ export default function BenefitForm() {
         onPress={() => handleCheckboxChange("retirement_401k")}
       />
 
-      <Text style={styles.label}>Time Off:</Text>
+      <Text style={[styles.label, { color: theme.textColor }]}>Time Off:</Text>
       <CustomCheckbox
         label="Vacation Time"
         checked={selections.vacation_time}

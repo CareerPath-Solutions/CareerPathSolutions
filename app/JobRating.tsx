@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import styles from "../src/styles/JobRatingStyles";
 import { JobRatingData } from "../core/types/rating.types";
+import { useTheme } from "../core/hooks/ThemedContext";
 
 /**
  *
@@ -12,6 +13,7 @@ import { JobRatingData } from "../core/types/rating.types";
 export default function JobRating(): JSX.Element {
   const params = useLocalSearchParams();
   const router = useRouter();
+  const { theme, isDark } = useTheme();
 
   /**
    * State variable to hold the job rating data
@@ -41,35 +43,53 @@ export default function JobRating(): JSX.Element {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.homeBtn} onPress={handleHomePress}>
-          <Image
-            source={require("../assets/images/HomeSymbol.png")}
-            style={styles.homeIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.heading}>{data.companyName}</Text>
-      </View>
+    <View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+      <View
+        style={[styles.container, { backgroundColor: theme.backgroundColor }]}
+      >
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.homeBtn} onPress={handleHomePress}>
+            <Image
+              source={require("../assets/images/HomeSymbol.png")}
+              style={styles.homeIcon}
+            />
+          </TouchableOpacity>
+          <Text style={[styles.heading, { color: theme.textColor }]}>
+            {data.companyName}
+          </Text>
+        </View>
 
-      <View style={styles.gradeContainer}>
-        <Text style={styles.label}>Benefits:</Text>
-        <Text style={styles.grade}>{data.benefits}</Text>
-      </View>
+        <View style={styles.gradeContainer}>
+          <Text style={[styles.label, { color: theme.textColor }]}>
+            Benefits:
+          </Text>
+          <Text style={[styles.grade, { color: theme.textColor }]}>
+            {data.benefits}
+          </Text>
+        </View>
 
-      <View style={styles.gradeContainer}>
-        <Text style={styles.label}>Paid Leave:</Text>
-        <Text style={styles.grade}>{data.paidLeave}</Text>
-      </View>
+        <View style={styles.gradeContainer}>
+          <Text style={[styles.label, { color: theme.textColor }]}>
+            Paid Leave:
+          </Text>
+          <Text style={[styles.grade, { color: theme.textColor }]}>
+            {data.paidLeave}
+          </Text>
+        </View>
 
-      <View style={styles.gradeContainer}>
-        <Text style={styles.label}>Salary:</Text>
-        <Text style={styles.grade}>{data.salary}</Text>
-      </View>
+        <View style={styles.gradeContainer}>
+          <Text style={[styles.label, { color: theme.textColor }]}>
+            Salary:
+          </Text>
+          <Text style={[styles.grade, { color: theme.textColor }]}>
+            {data.salary}
+          </Text>
+        </View>
 
-      <Text style={styles.overallGrade}>
-        Overall Grade: {data.overallGrade}
-      </Text>
+        <Text style={[styles.overallGrade, { color: theme.textColor }]}>
+          Overall Grade: {data.overallGrade}
+        </Text>
+      </View>
     </View>
   );
 }

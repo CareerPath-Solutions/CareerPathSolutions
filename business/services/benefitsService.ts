@@ -7,6 +7,9 @@ import {
     calculateOverallGrade
 } from '../calculators/gradeCalculator';
 
+/**
+ * [JobGrades description]
+ */
 interface JobGrades {
     benefits: string;
     timeOff: string;
@@ -14,6 +17,11 @@ interface JobGrades {
     overall: string;
 }
 
+/**
+ * [benefitsService description]
+ *
+ * @var {[type]}
+ */
 export const benefitsService = {
     async submitBenefits(
         username: string,

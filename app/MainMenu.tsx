@@ -7,6 +7,7 @@ import { userRepository } from "../data/repositories/userRepository";
 import styles from "../src/styles/MainPageStyles";
 import authStyles from "../src/styles/AuthStyles";
 import { useLocalSearchParams } from "expo-router";
+import { useTheme } from "../core/hooks/ThemedContext";
 
 /**
  *
@@ -20,6 +21,7 @@ export default function MainMenu() {
   const [previousOffers, setPreviousOffers] = useState<RatingDisplay[]>([]);
   const params = useLocalSearchParams();
   const passedUserId = params.userId;
+  const { theme, isDark } = useTheme();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -133,7 +135,7 @@ export default function MainMenu() {
     }
 
     router.push({
-      pathname: "/SettingsScreen",
+      pathname: "/Settings",
       params: { userId: currentUser.id },
     } as any);
   };
@@ -161,42 +163,82 @@ export default function MainMenu() {
   }
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.backgroundColor }]}
+    >
       <Image
         source={require("../assets/images/LandingPageGraphic.jpeg")}
         style={styles.networkImage}
       />
-      <Text style={styles.title}>CareerPath Solutions</Text>
-      <Text style={styles.subtitle}>
+      <Text style={[styles.title, { color: theme.textColor }]}>
+        CareerPath Solutions
+      </Text>
+      <Text style={[styles.subtitle, { color: theme.textColor }]}>
         Welcome back, {currentUser.user_name}!
       </Text>
-      <Text style={styles.subtitle}>
+      <Text style={[styles.subtitle, { color: theme.secondaryTextColor }]}>
         Compare complete job packages and benefits that matter to you.
       </Text>
 
       <View style={styles.twoBtns}>
-        <TouchableOpacity style={styles.button1} onPress={handleNewJobOffer}>
-          <Text style={styles.buttonText1}>New Job Offer</Text>
+        <TouchableOpacity
+          style={[
+            styles.button1,
+            { backgroundColor: theme.buttonBackgroundColor },
+          ]}
+          onPress={handleNewJobOffer}
+        >
+          <Text style={[styles.buttonText1, { color: theme.buttonTextColor }]}>
+            New Job Offer
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handlePreviousOffers}>
-          <Text style={styles.buttonText}>Previous Offers</Text>
+          <Text style={[styles.buttonText, { color: theme.buttonTextColor }]}>
+            Previous Offers
+          </Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.twoBtns}>
-        <TouchableOpacity style={styles.button1} onPress={handlePreferences}>
-          <Text style={styles.buttonText1}>My Preferences</Text>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            { backgroundColor: theme.buttonBackgroundColor },
+          ]}
+          onPress={handlePreferences}
+        >
+          <Text style={[styles.buttonText, { color: theme.buttonTextColor }]}>
+            My Preferences
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleSettings}>
-          <Text style={styles.buttonText}>Settings</Text>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            { backgroundColor: theme.buttonBackgroundColor },
+          ]}
+          onPress={handleSettings}
+        >
+          <Text style={[styles.buttonText, { color: theme.buttonTextColor }]}>
+            Settings
+          </Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity
-        style={authStyles.signOutButton}
+        style={[
+          authStyles.signOutButton,
+          { backgroundColor: theme.buttonBackgroundColor },
+        ]}
         onPress={handleSignOut}
       >
-        <Text style={authStyles.signOutButtonText}>Sign Out</Text>
+        <Text
+          style={[
+            authStyles.signOutButtonText,
+            { color: theme.buttonTextColor },
+          ]}
+        >
+          Sign Out
+        </Text>
       </TouchableOpacity>
     </View>
   );

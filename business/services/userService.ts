@@ -211,16 +211,6 @@ export const userService = {
    *
    * @return  {<Promise><User>}[return description]
    */
-  // async getOrCreateUser(): Promise<User> {
-  //   const authenticatedUser = await this.getCurrentAuthenticatedUser();
-  //   if (!authenticatedUser) throw new Error("Not authenticated");
-
-  //   const dbUser = await this.checkAuthentication(authenticatedUser);
-  //   if (!dbUser) throw new Error("Failed to get or create user");
-
-  //   return dbUser;
-  // },
-
   async getOrCreateUser(): Promise<User> {
     console.log("[AUTH DEBUGGING] Starting getOrCreateUser");
     
@@ -239,11 +229,17 @@ export const userService = {
     return dbUser;
   },
 
+  /**
+   * [getUserPreferences description]
+   *
+   * @param   {string<UserPreferences>}   userId  [userId description]
+   *
+   * @return  {Promise<UserPreferences>}          [return description]
+   */
   async getUserPreferences(userId: string): Promise<UserPreferences> {
     console.log("[SERVICE] getUserPreferences called with userId:", userId, "type:", typeof userId);
     
     try {
-      // Get preferences from the user_preferences table instead of the users table
       const userPrefs = await userRepository.getUserPreferencesById(userId);
       console.log("[SERVICE] Preferences retrieved:", userPrefs ? "Found" : "Not found");
       
