@@ -35,13 +35,11 @@ export default function BenefitForm() {
   const handleSubmit = async () => {
     try {
       const grades = await benefitsService.submitBenefits(
-        username,
         companyName,
         position,
         offeredSalary,
-        selections
+        selections,
       );
-
       router.push({
         pathname: "/JobRating",
         params: {

@@ -1,6 +1,8 @@
 import { supabase } from "../database/supabase";
 import { JobOfferDetails } from "../../core/types/jobOffer.types";
 
+const PGRST116 = "PGRST116"; // Supabase "no rows returned" error code
+
 export const jobOfferRepository = {
   // Get or create the current authenticated user in our users table
   getOrCreateUser: async () => {
@@ -9,13 +11,14 @@ export const jobOfferRepository = {
     } = await supabase.auth.getUser();
     if (!user) throw new Error("No authenticated user");
 
-    // Check if user already exists
-    const { data: existingUser } = await supabase
+    const { data: existingUser, error: findError } = await supabase
       .from("users")
       .select("*")
       .eq("auth_id", user.id)
       .single();
 
+    // Only treat "no rows" as not found — throw everything else
+    if (findError && findError.code !== PGRST116) throw findError;
     if (existingUser) return existingUser;
 
     // Create new user
@@ -39,19 +42,14 @@ export const jobOfferRepository = {
 
   // Create a job offer linked to the current user
   createJobOffer: async (formData: JobOfferDetails) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) throw new Error("No authenticated user");
+    // Use getOrCreateUser instead of assuming user exists
+    const dbUser = await jobOfferRepository.getOrCreateUser();
 
-    // Get our internal user record
-    const { data: dbUser, error: userError } = await supabase
-      .from("users")
-      .select("id")
-      .eq("auth_id", user.id)
-      .single();
-
-    if (userError) throw userError;
+    // Validate salary before inserting
+    const salaryNumber = Number(formData.salary);
+    if (isNaN(salaryNumber)) {
+      throw new Error("Invalid salary value. Please enter a valid number.");
+    }
 
     const { data, error } = await supabase
       .from("job_offer")
@@ -59,7 +57,7 @@ export const jobOfferRepository = {
         {
           ...formData,
           user_id: dbUser.id,
-          salary: Number(formData.salary),
+          salary: salaryNumber,
         },
       ])
       .select()
@@ -82,7 +80,8 @@ export const jobOfferRepository = {
       .eq("auth_id", user.id)
       .single();
 
-    if (userError) throw userError;
+    if (userError && userError.code !== PGRST116) throw userError;
+    if (!dbUser) throw new Error("User record not found");
 
     const { data, error } = await supabase
       .from("job_offer")
@@ -114,8 +113,17 @@ export const jobOfferRepository = {
       .eq("position", position)
       .single();
 
-    // If no data found, return a default so app doesn't crash
-    if (error) return { median_salary: 60000 };
+    // Only fall back to default on "no rows" — throw everything else
+    if (error) {
+      if (error.code === PGRST116) {
+        console.warn(
+          `No median salary found for position: ${position}. Using default.`,
+        );
+        return { median_salary: 60000 };
+      }
+      throw error;
+    }
+
     return data;
   },
 
@@ -131,7 +139,6 @@ export const jobOfferRepository = {
     notes?: string;
   }) => {
     const { error } = await supabase.from("rating").insert([ratingData]);
-
     if (error) throw error;
   },
 
@@ -148,7 +155,8 @@ export const jobOfferRepository = {
       .eq("auth_id", user.id)
       .single();
 
-    if (userError) throw userError;
+    if (userError && userError.code !== PGRST116) throw userError;
+    if (!dbUser) throw new Error("User record not found");
 
     const { data, error } = await supabase
       .from("rating")

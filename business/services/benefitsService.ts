@@ -16,8 +16,8 @@ interface JobGrades {
 }
 
 export const benefitsService = {
+  // Removed unused username parameter — user is derived from Supabase auth
   async submitBenefits(
-    username: string,
     companyName: string,
     position: string,
     offeredSalary: number,
@@ -47,11 +47,13 @@ export const benefitsService = {
         offeredSalary,
         medianData.median_salary,
       );
+
+      // calculateOverallGrade doesn't use preferences yet
+      // removing the parameter until category weighting is implemented
       const overallGrade = calculateOverallGrade(
         benefitsGrade,
         timeOffGrade,
         salaryGrade,
-        preferences,
       );
 
       // Save rating with job offer link
