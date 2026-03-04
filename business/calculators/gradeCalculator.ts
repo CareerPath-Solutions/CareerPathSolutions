@@ -1,7 +1,6 @@
 /**
  * Grade calculation utilities with preference weighting
  */
-
 export const letterToNumber = (grade: string): number => {
   switch (grade) {
     case "A":
@@ -113,7 +112,6 @@ export const calculateOverallGrade = (
   benefitsGrade: string,
   timeOffGrade: string,
   salaryGrade: string,
-  preferences?: any,
 ): string => {
   const benefitsNumber = letterToNumber(benefitsGrade);
   const timeOffNumber = letterToNumber(timeOffGrade);
