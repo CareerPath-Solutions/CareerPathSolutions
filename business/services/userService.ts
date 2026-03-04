@@ -1,5 +1,5 @@
-import { userRepository } from '../../data/repositories/userRepository';
-import { RatingDisplay, User } from '../../core/types/user.types';
+import { userRepository } from "../../data/repositories/userRepository";
+import { RatingDisplay, User } from "../../core/types/user.types";
 import * as WebBrowser from "expo-web-browser";
 
 export const userService = {
@@ -16,7 +16,10 @@ export const userService = {
   async checkAuthentication(authenticatedUser: any): Promise<User | null> {
     if (!authenticatedUser) return null;
     const username = this._extractUsername(authenticatedUser);
-    return await userRepository.getOrCreateGitHubUserByAuthId(authenticatedUser.id, username);
+    return await userRepository.getOrCreateGitHubUserByAuthId(
+      authenticatedUser.id,
+      username,
+    );
   },
 
   /**
@@ -25,7 +28,10 @@ export const userService = {
   async getOrCreateGitHubUser(authenticatedUser: any): Promise<User | null> {
     if (!authenticatedUser) return null;
     const username = this._extractUsername(authenticatedUser);
-    return await userRepository.getOrCreateGitHubUserByAuthId(authenticatedUser.id, username);
+    return await userRepository.getOrCreateGitHubUserByAuthId(
+      authenticatedUser.id,
+      username,
+    );
   },
 
   /**
@@ -34,12 +40,12 @@ export const userService = {
   async getPreviousOffers(username: string): Promise<RatingDisplay[]> {
     try {
       const ratings = await userRepository.getRatingsByUserId(username);
-      return ratings.map(rating => ({
+      return ratings.map((rating) => ({
         company: rating.company_name,
-        grade: rating.overall_grade
+        grade: rating.overall_grade,
       }));
     } catch (error) {
-      console.error('Error fetching previous offers:', error);
+      console.error("Error fetching previous offers:", error);
       return [];
     }
   },
@@ -71,7 +77,7 @@ export const userService = {
   async signInWithGitHub(redirectUri: string) {
     try {
       // Use Supabase's built-in OAuth handling instead of manual URL construction
-      return await userRepository.signInWithGitHub('github');
+      return await userRepository.signInWithGitHub("github");
     } catch (error) {
       console.error("Error initiating GitHub sign-in:", error);
       throw error;
@@ -85,8 +91,8 @@ export const userService = {
     try {
       const parsedUrl = new URL(url);
       const searchParams = new URLSearchParams(parsedUrl.search);
-      const code = searchParams.get('code');
-      
+      const code = searchParams.get("code");
+
       if (code) {
         return await userRepository.exchangeCodeForSession(code);
       }
@@ -114,7 +120,10 @@ export const userService = {
   /**
    * Update a user's profile
    */
-  async updateUserProfile(userId: string, updates: Partial<User>): Promise<User> {
+  async updateUserProfile(
+    userId: string,
+    updates: Partial<User>,
+  ): Promise<User> {
     return await userRepository.updateUserProfile(userId, updates);
   },
 
@@ -127,16 +136,18 @@ export const userService = {
 
   // Private helper methods
   _extractUsername(authenticatedUser: any): string {
-    return authenticatedUser.user_metadata?.user_name ||
-           authenticatedUser.email?.split('@')[0] ||
-           `github_user_${authenticatedUser.id.slice(0, 8)}`;
+    return (
+      authenticatedUser.user_metadata?.user_name ||
+      authenticatedUser.email?.split("@")[0] ||
+      `github_user_${authenticatedUser.id.slice(0, 8)}`
+    );
   },
 
   _buildGitHubAuthUrl(redirectUri: string): string {
     // These values would typically come from environment variables
-    const clientId = "0v23liXUkdfrifpf3qw7";// TODO Does this need to be concealed in .env file?????
+    const clientId = process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID || "";
     const authEndpoint = "https://github.com/login/oauth/authorize";
-    
+
     // Create URL parameters manually
     const params = new URLSearchParams({
       client_id: clientId,
@@ -144,7 +155,7 @@ export const userService = {
       scope: "read:user user:email",
       state: Math.random().toString(36).substring(2, 15),
     });
-    
+
     return `${authEndpoint}?${params.toString()}`;
-  }
+  },
 };
