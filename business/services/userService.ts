@@ -1,6 +1,7 @@
 import { userRepository } from "../../data/repositories/userRepository";
 import { RatingDisplay, User } from "../../core/types/user.types";
-import * as WebBrowser from "expo-web-browser";
+
+// Removed unused WebBrowser import
 
 export const userService = {
   /**
@@ -73,10 +74,10 @@ export const userService = {
 
   /**
    * Sign in with GitHub OAuth
+   * Removed unused redirectUri parameter
    */
-  async signInWithGitHub(redirectUri: string) {
+  async signInWithGitHub() {
     try {
-      // Use Supabase's built-in OAuth handling instead of manual URL construction
       return await userRepository.signInWithGitHub("github");
     } catch (error) {
       console.error("Error initiating GitHub sign-in:", error);
@@ -144,11 +145,16 @@ export const userService = {
   },
 
   _buildGitHubAuthUrl(redirectUri: string): string {
-    // These values would typically come from environment variables
-    const clientId = process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID || "";
-    const authEndpoint = "https://github.com/login/oauth/authorize";
+    const clientId = process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID;
 
-    // Create URL parameters manually
+    // Throw early if client ID is not configured
+    if (!clientId) {
+      throw new Error(
+        "EXPO_PUBLIC_GITHUB_CLIENT_ID is not set. Check your .env file.",
+      );
+    }
+
+    const authEndpoint = "https://github.com/login/oauth/authorize";
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: redirectUri,
